@@ -20,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import java.util.Stack
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
 
 @Composable
@@ -65,6 +66,7 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
     var gameMessage by remember { mutableStateOf("") }
     var gameOver by remember { mutableStateOf(false) }
     val ai = Connect4AI()
+    val moveStack = remember { Stack<List<MutableList<Int>>>() }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -79,7 +81,7 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
                         state = board[row][col],
                         onClick = {
                             if (!gameOver) {
-                                handleCellClick(row, col, board, currentPlayer) { updatedBoard, nextPlayer ->
+                                handleCellClick(row, col, board, currentPlayer,moveStack) { updatedBoard, nextPlayer ->
                                     board = updatedBoard
                                     val winner = checkWin(board)
                                     if (winner != 0) {
@@ -95,7 +97,7 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
                                     if (isSinglePlayer && currentPlayer == 2 && !gameOver) {
                                         val aiMove = ai.getMove(board)
                                         if (aiMove != -1) {
-                                            handleCellClick(0, aiMove, board, 2) { updatedBoard, nextPlayer ->
+                                            handleCellClick(0, aiMove, board, 2, moveStack) { updatedBoard, nextPlayer ->
                                                 board = updatedBoard
                                                 val aiWinner = checkWin(board)
                                                 if (aiWinner != 0) {
@@ -118,8 +120,24 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
             }
         }
         Text(text = "Current Turn: Player $currentPlayer", modifier = Modifier.padding(top = 16.dp))
+
         if (gameMessage.isNotEmpty()) {
             Text(text = gameMessage, modifier = Modifier.padding(top = 16.dp), color = Color.Red)
+        }
+
+        // Undo Button
+        Button(
+            onClick = {
+                if (moveStack.isNotEmpty()) {
+                    board = moveStack.pop()
+                    currentPlayer = if (currentPlayer == 1) 2 else 1
+                    gameMessage = ""
+                    gameOver = false
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Undo Move")
         }
     }
 }
@@ -161,8 +179,12 @@ fun handleCellClick(
     col: Int,
     board: List<MutableList<Int>>,
     currentPlayer: Int,
+    moveStack: Stack<List<MutableList<Int>>>,
     updateBoard: (List<MutableList<Int>>, Int) -> Unit
 ) {
+    // Save the current board state to the stack before updating
+    moveStack.push(board.map { it.toMutableList() })
+
     for (r in board.size - 1 downTo 0) {
         if (board[r][col] == 0) {
             board[r][col] = currentPlayer
