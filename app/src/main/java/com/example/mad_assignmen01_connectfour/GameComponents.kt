@@ -28,9 +28,11 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "menu") {
         composable("menu") { MainMenu(navController) }
-        composable("connect4") { DefaultPreview() }
+        composable("connect4/2player") { DefaultPreview(isSinglePlayer = false) }
+        composable("connect4/1player") { DefaultPreview(isSinglePlayer = true) }
     }
 }
+
 
 @Composable
 fun MainMenu(navController: NavHostController) {
@@ -41,20 +43,28 @@ fun MainMenu(navController: NavHostController) {
     ) {
         Text(text = "Main Menu")
         Button(
-            onClick = { navController.navigate("connect4") },
+            onClick = { navController.navigate("connect4/2player") },
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            Text(text = "Start Connect 4")
+            Text(text = "Start 2 Player Game")
+        }
+        Button(
+            onClick = { navController.navigate("connect4/1player") },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Start 1 Player Game")
         }
     }
 }
 
+
 @Composable
-fun Connect4Board(rows: Int = 6, columns: Int = 7) {
+fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
     var board by remember { mutableStateOf(List(rows) { MutableList(columns) { 0 } }) }
     var currentPlayer by remember { mutableStateOf(1) }
+    var gameMessage by remember { mutableStateOf("") }
     var gameOver by remember { mutableStateOf(false) }
-    var winner by remember { mutableStateOf(0) }
+    val ai = Connect4AI()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -62,7 +72,6 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7) {
             .background(color = Color.LightGray)
             .padding(16.dp)
     ) {
-        // Draw the board
         for (row in 0 until rows) {
             Row {
                 for (col in 0 until columns) {
@@ -72,14 +81,34 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7) {
                             if (!gameOver) {
                                 handleCellClick(row, col, board, currentPlayer) { updatedBoard, nextPlayer ->
                                     board = updatedBoard
-                                    currentPlayer = nextPlayer
-
-                                    winner = checkWin(board)
+                                    val winner = checkWin(board)
                                     if (winner != 0) {
+                                        gameMessage = "Player $winner Wins!"
                                         gameOver = true
                                     } else if (isDraw(board)) {
+                                        gameMessage = "It's a Draw!"
                                         gameOver = true
-                                        winner = -1
+                                    } else {
+                                        currentPlayer = nextPlayer
+                                    }
+
+                                    if (isSinglePlayer && currentPlayer == 2 && !gameOver) {
+                                        val aiMove = ai.getMove(board)
+                                        if (aiMove != -1) {
+                                            handleCellClick(0, aiMove, board, 2) { updatedBoard, nextPlayer ->
+                                                board = updatedBoard
+                                                val aiWinner = checkWin(board)
+                                                if (aiWinner != 0) {
+                                                    gameMessage = "Player $aiWinner Wins!"
+                                                    gameOver = true
+                                                } else if (isDraw(board)) {
+                                                    gameMessage = "It's a Draw!"
+                                                    gameOver = true
+                                                } else {
+                                                    currentPlayer = nextPlayer
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -88,23 +117,14 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7) {
                 }
             }
         }
-
-        Text(
-            text = if (gameOver) {
-                when (winner) {
-                    1 -> "Player 1 Wins!"
-                    2 -> "Player 2 Wins!"
-                    -1 -> "It's a Draw!"
-                    else -> ""
-                }
-            } else {
-                "Current Turn: Player $currentPlayer"
-            },
-            modifier = Modifier.padding(top = 16.dp),
-            color = Color.Black
-        )
+        Text(text = "Current Turn: Player $currentPlayer", modifier = Modifier.padding(top = 16.dp))
+        if (gameMessage.isNotEmpty()) {
+            Text(text = gameMessage, modifier = Modifier.padding(top = 16.dp), color = Color.Red)
+        }
     }
 }
+
+
 
 @Composable
 fun Connect4Cell(state: Int, onClick: () -> Unit) {
@@ -188,7 +208,7 @@ fun checkWin(board: List<MutableList<Int>>): Int {
             }
         }
     }
-    return 0 // No winner
+    return 0
 }
 
 fun isDraw(board: List<MutableList<Int>>): Boolean {
@@ -197,7 +217,7 @@ fun isDraw(board: List<MutableList<Int>>): Boolean {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun DefaultPreview(isSinglePlayer: Boolean = false) {
     MAD_Assignmen01_ConnectFourTheme {
         Column(
             modifier = Modifier
@@ -207,10 +227,11 @@ fun DefaultPreview() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             profileDisplay()
-            Connect4Board()
+            Connect4Board(isSinglePlayer = isSinglePlayer)
         }
     }
 }
+
 
 @Composable
 fun profileDisplay() {
