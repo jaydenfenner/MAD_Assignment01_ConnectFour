@@ -29,10 +29,13 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "menu") {
         composable("menu") { MainMenu(navController) }
-        composable("connect4/2player") { DefaultPreview(isSinglePlayer = false) }
+        composable("start/1player") { GameStartMenu(navController, isSinglePlayer = true) }
+        composable("start/2player") { GameStartMenu(navController, isSinglePlayer = false) }
         composable("connect4/1player") { DefaultPreview(isSinglePlayer = true) }
+        composable("connect4/2player") { DefaultPreview(isSinglePlayer = false) }
     }
 }
+
 
 
 @Composable
@@ -44,16 +47,41 @@ fun MainMenu(navController: NavHostController) {
     ) {
         Text(text = "Main Menu")
         Button(
-            onClick = { navController.navigate("connect4/2player") },
+            onClick = { navController.navigate("start/2player") },
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "Start 2 Player Game")
         }
         Button(
-            onClick = { navController.navigate("connect4/1player") },
+            onClick = { navController.navigate("start/1player") },
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "Start 1 Player Game")
+        }
+    }
+}
+
+@Composable
+fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = if (isSinglePlayer) "Single Player Game" else "Two Player Game")
+        Button(
+            onClick = {
+                if (isSinglePlayer) {
+                    navController.navigate("connect4/1player")
+                } else {
+                    navController.navigate("connect4/2player")
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Start Game")
         }
     }
 }
@@ -81,7 +109,7 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
                         state = board[row][col],
                         onClick = {
                             if (!gameOver) {
-                                handleCellClick(row, col, board, currentPlayer,moveStack) { updatedBoard, nextPlayer ->
+                                handleCellClick(row, col, board, currentPlayer, moveStack) { updatedBoard, nextPlayer ->
                                     board = updatedBoard
                                     val winner = checkWin(board)
                                     if (winner != 0) {
@@ -125,7 +153,6 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
             Text(text = gameMessage, modifier = Modifier.padding(top = 16.dp), color = Color.Red)
         }
 
-        // Undo Button
         Button(
             onClick = {
                 if (moveStack.isNotEmpty()) {
@@ -139,8 +166,22 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
         ) {
             Text(text = "Undo Move")
         }
+
+        Button(
+            onClick = {
+                moveStack.clear()
+                board = List(rows) { MutableList(columns) { 0 } }
+                currentPlayer = 1
+                gameMessage = ""
+                gameOver = false
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Reset Game")
+        }
     }
 }
+
 
 
 
