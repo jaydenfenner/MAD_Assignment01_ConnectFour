@@ -5,12 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +21,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
-
 
 @Composable
 fun AppNavigation() {
@@ -52,47 +51,79 @@ fun MainMenu(navController: NavHostController) {
 
 @Composable
 fun Connect4Board(rows: Int = 6, columns: Int = 7) {
-    Box(
+    var board by remember { mutableStateOf(List(rows) { MutableList(columns) { 0 } }) }
+    var currentPlayer by remember { mutableStateOf(1) }
+    var gameOver by remember { mutableStateOf(false) }
+    var winner by remember { mutableStateOf(0) }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .background(color = Color.LightGray)
+            .padding(16.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .background(color = Color.LightGray)
-                .padding(16.dp)
-        ) {
-            Column {
-                for (row in 0 until rows) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        for (col in 0 until columns) {
-                            Connect4Cell(
-                                modifier = Modifier
-                                    .width(50.dp)
-                                    .height(50.dp)
-                                    .padding(4.dp)
-                            )
+        // Draw the board
+        for (row in 0 until rows) {
+            Row {
+                for (col in 0 until columns) {
+                    Connect4Cell(
+                        state = board[row][col],
+                        onClick = {
+                            if (!gameOver) {
+                                handleCellClick(row, col, board, currentPlayer) { updatedBoard, nextPlayer ->
+                                    board = updatedBoard
+                                    currentPlayer = nextPlayer
+
+                                    winner = checkWin(board)
+                                    if (winner != 0) {
+                                        gameOver = true
+                                    } else if (isDraw(board)) {
+                                        gameOver = true
+                                        winner = -1
+                                    }
+                                }
+                            }
                         }
-                    }
+                    )
                 }
             }
         }
+
+        Text(
+            text = if (gameOver) {
+                when (winner) {
+                    1 -> "Player 1 Wins!"
+                    2 -> "Player 2 Wins!"
+                    -1 -> "It's a Draw!"
+                    else -> ""
+                }
+            } else {
+                "Current Turn: Player $currentPlayer"
+            },
+            modifier = Modifier.padding(top = 16.dp),
+            color = Color.Black
+        )
     }
 }
 
-
 @Composable
-fun Connect4Cell(modifier: Modifier = Modifier) {
+fun Connect4Cell(state: Int, onClick: () -> Unit) {
+    val color = when (state) {
+        1 -> Color.Red
+        2 -> Color.Yellow
+        else -> Color.White
+    }
+
     Box(
-        modifier = modifier
+        modifier = Modifier
+            .size(50.dp)
+            .padding(4.dp)
+            .border(2.dp, Color.Black)
             .background(Color.Blue)
-            .border(2.dp, Color.Black),
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Circle(color = Color.White)
+        Circle(color = color)
     }
 }
 
@@ -105,7 +136,65 @@ fun Circle(color: Color) {
     )
 }
 
-// Only display static content in previews
+fun handleCellClick(
+    row: Int,
+    col: Int,
+    board: List<MutableList<Int>>,
+    currentPlayer: Int,
+    updateBoard: (List<MutableList<Int>>, Int) -> Unit
+) {
+    for (r in board.size - 1 downTo 0) {
+        if (board[r][col] == 0) {
+            board[r][col] = currentPlayer
+            updateBoard(board, if (currentPlayer == 1) 2 else 1)
+            break
+        }
+    }
+}
+
+fun checkWin(board: List<MutableList<Int>>): Int {
+    for (row in board.indices) {
+        for (col in board[row].indices) {
+            if (board[row][col] != 0) {
+                val player = board[row][col]
+
+                if (col + 3 < board[row].size &&
+                    player == board[row][col + 1] &&
+                    player == board[row][col + 2] &&
+                    player == board[row][col + 3]) {
+                    return player
+                }
+
+                if (row + 3 < board.size &&
+                    player == board[row + 1][col] &&
+                    player == board[row + 2][col] &&
+                    player == board[row + 3][col]) {
+                    return player
+                }
+
+                if (row + 3 < board.size && col + 3 < board[row].size &&
+                    player == board[row + 1][col + 1] &&
+                    player == board[row + 2][col + 2] &&
+                    player == board[row + 3][col + 3]) {
+                    return player
+                }
+
+                if (row - 3 >= 0 && col + 3 < board[row].size &&
+                    player == board[row - 1][col + 1] &&
+                    player == board[row - 2][col + 2] &&
+                    player == board[row - 3][col + 3]) {
+                    return player
+                }
+            }
+        }
+    }
+    return 0 // No winner
+}
+
+fun isDraw(board: List<MutableList<Int>>): Boolean {
+    return board.all { row -> row.all { it != 0 } }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
