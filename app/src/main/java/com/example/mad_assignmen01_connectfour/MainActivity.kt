@@ -13,6 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
 
 //Message Test
@@ -23,7 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MAD_Assignmen01_ConnectFourTheme {
                 val dataViewModel = viewModel<ConnectFourViewModel>()
-                Menu()
+                AppNavigation()
             }
         }
     }
