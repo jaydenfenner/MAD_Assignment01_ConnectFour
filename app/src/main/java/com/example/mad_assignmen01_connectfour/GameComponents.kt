@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import android.content.Context
 import android.util.DisplayMetrics
+import androidx.compose.material3.TextField
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,16 +35,21 @@ fun AppNavigation() {
         composable("menu") { MainMenu(navController) }
         composable("start/1player") { GameStartMenu(navController, isSinglePlayer = true) }
         composable("start/2player") { GameStartMenu(navController, isSinglePlayer = false) }
-        composable("connect4/1player/{gridWidth}/{gridHeight}") { backStackEntry ->
+        composable("connect4/1player/{gridWidth}/{gridHeight}/{player1Name}") { backStackEntry ->
             val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
             val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
-            DefaultPreview(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight)
+            val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
+            DefaultPreview(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name)
         }
-        composable("connect4/2player/{gridWidth}/{gridHeight}") { backStackEntry ->
+
+        composable("connect4/2player/{gridWidth}/{gridHeight}/{player1Name}/{player2Name}") { backStackEntry ->
             val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
             val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
-            DefaultPreview(isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight)
+            val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
+            val player2Name = backStackEntry.arguments?.getString("player2Name") ?: "Player 2"
+            DefaultPreview(isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name, player2Name = player2Name)
         }
+
     }
 }
 
@@ -74,6 +80,8 @@ fun MainMenu(navController: NavHostController) {
 
 @Composable
 fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
+    var player1Name by remember { mutableStateOf("Player 1") }
+    var player2Name by remember { mutableStateOf("Player 2") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,12 +91,25 @@ fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
     ) {
         Text(text = if (isSinglePlayer) "Single Player Game" else "Two Player Game")
 
+        TextField(
+            value = player1Name,
+            onValueChange = { player1Name = it },
+            label = { Text("Enter Player 1 Name") }
+        )
+
+        if (!isSinglePlayer) {
+            TextField(
+                value = player2Name,
+                onValueChange = { player2Name = it },
+                label = { Text("Enter Player 2 Name") }
+            )
+        }
         Button(
             onClick = {
                 if (isSinglePlayer) {
-                    navController.navigate("connect4/1player/7/6")
+                    navController.navigate("connect4/1player/7/6/${player1Name}")
                 } else {
-                    navController.navigate("connect4/2player/7/6")
+                    navController.navigate("connect4/2player/7/6/${player1Name}/${player2Name}")
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
@@ -96,12 +117,13 @@ fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
             Text(text = "Start Standard Game (7x6)")
         }
 
+
         Button(
             onClick = {
                 if (isSinglePlayer) {
-                    navController.navigate("connect4/1player/6/5")
+                    navController.navigate("connect4/1player/6/5/${player1Name}")
                 } else {
-                    navController.navigate("connect4/2player/6/5")
+                    navController.navigate("connect4/2player/6/5/${player1Name}/${player2Name}")
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
@@ -112,9 +134,9 @@ fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
         Button(
             onClick = {
                 if (isSinglePlayer) {
-                    navController.navigate("connect4/1player/8/7")
+                    navController.navigate("connect4/1player/8/7/${player1Name}")
                 } else {
-                    navController.navigate("connect4/2player/8/7")
+                    navController.navigate("connect4/2player/8/7/${player1Name}/${player2Name}")
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
@@ -329,7 +351,13 @@ fun isDraw(board: List<MutableList<Int>>): Boolean {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview(isSinglePlayer: Boolean = false,gridWidth: Int = 7, gridHeight: Int = 6) {
+fun DefaultPreview(
+    isSinglePlayer: Boolean = false,
+    gridWidth: Int = 7,
+    gridHeight: Int = 6,
+    player1Name: String = "Player 1",
+    player2Name: String = "Player 2"
+    ) {
     MAD_Assignmen01_ConnectFourTheme {
         Column(
             modifier = Modifier
@@ -338,15 +366,17 @@ fun DefaultPreview(isSinglePlayer: Boolean = false,gridWidth: Int = 7, gridHeigh
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            profileDisplay()
-            Connect4Board(gridHeight, gridWidth,isSinglePlayer = isSinglePlayer)
+            profileDisplay(player1Name, if (isSinglePlayer) "AI" else player2Name)
+            Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer)
         }
     }
 }
 
 
+
+
 @Composable
-fun profileDisplay() {
+fun profileDisplay(player1Name: String, player2Name: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -364,7 +394,7 @@ fun profileDisplay() {
             ) {
                 Text(text = "")
             }
-            Text(text = "Player 1")
+            Text(text = player1Name)
         }
 
         Spacer(modifier = Modifier.width(100.dp))
@@ -379,7 +409,8 @@ fun profileDisplay() {
             ) {
                 Text(text = "")
             }
-            Text(text = "Player 2")
+            Text(text = player2Name)
         }
     }
 }
+
