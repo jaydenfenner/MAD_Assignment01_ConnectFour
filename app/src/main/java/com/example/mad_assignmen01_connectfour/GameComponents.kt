@@ -1,82 +1,42 @@
 package com.example.mad_assignmen01_connectfour
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import android.content.Context
-import android.util.DisplayMetrics
-import androidx.compose.material3.TextField
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import java.util.Stack
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
-
-@Composable
-fun AppNav() {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "menu") {
-        composable("menu") { MainMenu(navController) }
-        composable("start/1player") { GameStartMenu(navController, isSinglePlayer = true) }
-        composable("start/2player") { GameStartMenu(navController, isSinglePlayer = false) }
-        composable("connect4/1player/{gridWidth}/{gridHeight}/{player1Name}") { backStackEntry ->
-            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
-            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
-            val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
-            DefaultPreview(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name)
-        }
-
-        composable("connect4/2player/{gridWidth}/{gridHeight}/{player1Name}/{player2Name}") { backStackEntry ->
-            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
-            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
-            val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
-            val player2Name = backStackEntry.arguments?.getString("player2Name") ?: "Player 2"
-            DefaultPreview(isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name, player2Name = player2Name)
-        }
-
-    }
-}
-
-
-
-@Composable
-fun MainMenu(navController: NavHostController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(text = "Main Menu")
-        Button(
-            onClick = { navController.navigate("start/2player") },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start 2 Player Game")
-        }
-        Button(
-            onClick = { navController.navigate("start/1player") },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start 1 Player Game")
-        }
-    }
-}
+import java.util.Stack
 
 @Composable
 fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
@@ -352,6 +312,7 @@ fun isDraw(board: List<MutableList<Int>>): Boolean {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview(
+    shVm: ConnectFourViewModel = ConnectFourViewModel(),
     isSinglePlayer: Boolean = false,
     gridWidth: Int = 7,
     gridHeight: Int = 6,
@@ -366,17 +327,34 @@ fun DefaultPreview(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            profileDisplay(player1Name, if (isSinglePlayer) "AI" else player2Name)
+            ProfileDisplay(
+                leftProfile = shVm.player1Profile,
+                rightProfile = if (isSinglePlayer) shVm.computerProfile else shVm.player2Profile)
             Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer)
         }
     }
 }
 
-
-
+@Composable
+fun ProfileImageClickable(
+    modifier: Modifier = Modifier,
+    userProfile: UserProfile,
+    onClick: () -> Unit
+) {
+    FilledIconButton(
+        onClick = {onClick()},
+        modifier = modifier,
+        colors = IconButtonDefaults.filledIconButtonColors(Color.Yellow)
+    ) {
+        Image(
+            painter = painterResource(id = userProfile.avatarID),
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize())
+    }
+}
 
 @Composable
-fun profileDisplay(player1Name: String, player2Name: String) {
+fun ProfileDisplay(leftProfile: UserProfile, rightProfile: UserProfile) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -388,13 +366,8 @@ fun profileDisplay(player1Name: String, player2Name: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(8.dp)
         ) {
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.size(75.dp)
-            ) {
-                Text(text = "")
-            }
-            Text(text = player1Name)
+            ProfileImageClickable(Modifier.size(75.dp), leftProfile) { /* TODO */ }
+            Text(text = leftProfile.name)
         }
 
         Spacer(modifier = Modifier.width(100.dp))
@@ -403,13 +376,8 @@ fun profileDisplay(player1Name: String, player2Name: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(8.dp)
         ) {
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.size(75.dp)
-            ) {
-                Text(text = "")
-            }
-            Text(text = player2Name)
+            ProfileImageClickable(Modifier.size(75.dp), rightProfile) { /* TODO */ }
+            Text(text = rightProfile.name)
         }
     }
 }
