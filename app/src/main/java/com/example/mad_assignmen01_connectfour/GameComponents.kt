@@ -21,6 +21,7 @@ import android.content.Context
 import android.util.DisplayMetrics
 import androidx.compose.material3.TextField
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -225,7 +226,13 @@ fun Connect4Cell(state: Int, onClick: () -> Unit) {
     val metrics = context.resources.displayMetrics
     val screenWidth = metrics.widthPixels / metrics.density
     val screenHeight = metrics.heightPixels / metrics.density
-    val cellSize = (screenWidth / 10).dp
+
+    val cellSize = if (screenWidth > screenHeight) {
+        (screenHeight / 13).dp
+    } else {
+        (screenWidth / 10).dp
+    }
+
     val color = when (state) {
         1 -> Color.Red
         2 -> Color.Yellow
@@ -241,20 +248,15 @@ fun Connect4Cell(state: Int, onClick: () -> Unit) {
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Circle(color = color)
+        Circle(color = color, cellSize = cellSize)
     }
 }
 
 @Composable
-fun Circle(color: Color) {
-    val context = LocalContext.current
-    val metrics = context.resources.displayMetrics
-    val screenWidth = metrics.widthPixels / metrics.density
-    val screenHeight = metrics.heightPixels / metrics.density
-    val cellSize = ((screenWidth/10)*.66).dp
+fun Circle(color: Color, cellSize: Dp) {
     Box(
         modifier = Modifier
-            .size(cellSize)
+            .size(cellSize * 0.66f)
             .background(color, shape = CircleShape)
     )
 }
