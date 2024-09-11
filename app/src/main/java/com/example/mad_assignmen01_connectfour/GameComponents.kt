@@ -27,33 +27,6 @@ import androidx.navigation.compose.rememberNavController
 import java.util.Stack
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
 
-@Composable
-fun AppNav() {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "menu") {
-        composable("menu") { MainMenu(navController) }
-        composable("start/1player") { GameStartMenu(navController, isSinglePlayer = true) }
-        composable("start/2player") { GameStartMenu(navController, isSinglePlayer = false) }
-        composable("connect4/1player/{gridWidth}/{gridHeight}/{player1Name}") { backStackEntry ->
-            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
-            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
-            val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
-            DefaultPreview(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name)
-        }
-
-        composable("connect4/2player/{gridWidth}/{gridHeight}/{player1Name}/{player2Name}") { backStackEntry ->
-            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
-            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
-            val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
-            val player2Name = backStackEntry.arguments?.getString("player2Name") ?: "Player 2"
-            DefaultPreview(isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name, player2Name = player2Name)
-        }
-
-    }
-}
-
-
 
 @Composable
 fun MainMenu(navController: NavHostController) {
@@ -98,7 +71,6 @@ fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
         )
 
         if (!isSinglePlayer) {
-            // Player 2 Name Input (for 2-player mode)
             TextField(
                 value = player2Name,
                 onValueChange = { player2Name = it },

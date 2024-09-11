@@ -30,5 +30,19 @@ fun AppNavigation() {
             GameStartMenu(navController, isSinglePlayer = false) }
         composable(Routes.GAME_1P) { DefaultPreview(isSinglePlayer = true) }
         composable(Routes.GAME_2P) { DefaultPreview(isSinglePlayer = false) }
+        composable("connect4/1player/{gridWidth}/{gridHeight}/{player1Name}") { backStackEntry ->
+            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
+            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
+            val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
+            DefaultPreview(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name)
+        }
+
+        composable("connect4/2player/{gridWidth}/{gridHeight}/{player1Name}/{player2Name}") { backStackEntry ->
+            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
+            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
+            val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
+            val player2Name = backStackEntry.arguments?.getString("player2Name") ?: "Player 2"
+            DefaultPreview(isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name, player2Name = player2Name)
+        }
     }
 }
