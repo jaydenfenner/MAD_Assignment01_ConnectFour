@@ -26,10 +26,8 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = Routes.MAIN_MENU) {
         composable(Routes.MAIN_MENU) {MainMenuScreen(navController, sharedViewModel) }
         composable(Routes.EDIT_PROFILES) { EditProfilesScreen(navController, sharedViewModel) }
-        composable(Routes.GAME_START_MENU_1P) {
-            GameStartMenu(navController, isSinglePlayer = true) }
-        composable(Routes.GAME_START_MENU_2P) {
-            GameStartMenu(navController, isSinglePlayer = false) }
+        composable(Routes.GAME_START_MENU_1P) { Start1PGameScreen(navController, sharedViewModel) }
+        composable(Routes.GAME_START_MENU_2P) { Start2PGameScreen(navController, sharedViewModel) }
         composable(Routes.GAME_1P) { DefaultPreview(isSinglePlayer = true) }
         composable(Routes.GAME_2P) { DefaultPreview(isSinglePlayer = false) }
         composable(Routes.GAME_1P + "/{gridWidth}/{gridHeight}/{player1Name}") { backStackEntry ->
