@@ -1,8 +1,5 @@
 package com.example.mad_assignmen01_connectfour
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,49 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import java.util.Stack
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
-
-@Composable
-fun AppNavigation() {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "menu") {
-        composable("menu") { MainMenu(navController) }
-        composable("start/1player") { GameStartMenu(navController, isSinglePlayer = true) }
-        composable("start/2player") { GameStartMenu(navController, isSinglePlayer = false) }
-        composable("connect4/1player") { DefaultPreview(isSinglePlayer = true) }
-        composable("connect4/2player") { DefaultPreview(isSinglePlayer = false) }
-    }
-}
-
-
-
-@Composable
-fun MainMenu(navController: NavHostController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(text = "Main Menu")
-        Button(
-            onClick = { navController.navigate("start/2player") },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start 2 Player Game")
-        }
-        Button(
-            onClick = { navController.navigate("start/1player") },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start 1 Player Game")
-        }
-    }
-}
 
 @Composable
 fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
@@ -74,9 +30,9 @@ fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
         Button(
             onClick = {
                 if (isSinglePlayer) {
-                    navController.navigate("connect4/1player")
+                    navController.navigate(Routes.GAME_1P)
                 } else {
-                    navController.navigate("connect4/2player")
+                    navController.navigate(Routes.GAME_2P)
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
@@ -289,7 +245,7 @@ fun DefaultPreview(isSinglePlayer: Boolean = false) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            profileDisplay()
+            ProfileDisplay()
             Connect4Board(isSinglePlayer = isSinglePlayer)
         }
     }
@@ -297,7 +253,7 @@ fun DefaultPreview(isSinglePlayer: Boolean = false) {
 
 
 @Composable
-fun profileDisplay() {
+fun ProfileDisplay() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
