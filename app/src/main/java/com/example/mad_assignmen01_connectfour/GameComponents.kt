@@ -17,6 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import android.content.Context
+import android.util.DisplayMetrics
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -31,8 +34,16 @@ fun AppNavigation() {
         composable("menu") { MainMenu(navController) }
         composable("start/1player") { GameStartMenu(navController, isSinglePlayer = true) }
         composable("start/2player") { GameStartMenu(navController, isSinglePlayer = false) }
-        composable("connect4/1player") { DefaultPreview(isSinglePlayer = true) }
-        composable("connect4/2player") { DefaultPreview(isSinglePlayer = false) }
+        composable("connect4/1player/{gridWidth}/{gridHeight}") { backStackEntry ->
+            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
+            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
+            DefaultPreview(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight)
+        }
+        composable("connect4/2player/{gridWidth}/{gridHeight}") { backStackEntry ->
+            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
+            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
+            DefaultPreview(isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight)
+        }
     }
 }
 
@@ -71,20 +82,48 @@ fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = if (isSinglePlayer) "Single Player Game" else "Two Player Game")
+
         Button(
             onClick = {
                 if (isSinglePlayer) {
-                    navController.navigate("connect4/1player")
+                    navController.navigate("connect4/1player/7/6")
                 } else {
-                    navController.navigate("connect4/2player")
+                    navController.navigate("connect4/2player/7/6")
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            Text(text = "Start Game")
+            Text(text = "Start Standard Game (7x6)")
+        }
+
+        Button(
+            onClick = {
+                if (isSinglePlayer) {
+                    navController.navigate("connect4/1player/6/5")
+                } else {
+                    navController.navigate("connect4/2player/6/5")
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Start Small Game (6x5)")
+        }
+
+        Button(
+            onClick = {
+                if (isSinglePlayer) {
+                    navController.navigate("connect4/1player/8/7")
+                } else {
+                    navController.navigate("connect4/2player/8/7")
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Start Large Game (8x7)")
         }
     }
 }
+
 
 
 @Composable
@@ -185,8 +224,14 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
 
 
 
+
 @Composable
 fun Connect4Cell(state: Int, onClick: () -> Unit) {
+    val context = LocalContext.current
+    val metrics = context.resources.displayMetrics
+    val screenWidth = metrics.widthPixels / metrics.density
+    val screenHeight = metrics.heightPixels / metrics.density
+    val cellSize = (screenWidth / 10).dp
     val color = when (state) {
         1 -> Color.Red
         2 -> Color.Yellow
@@ -195,7 +240,7 @@ fun Connect4Cell(state: Int, onClick: () -> Unit) {
 
     Box(
         modifier = Modifier
-            .size(50.dp)
+            .size(cellSize)
             .padding(4.dp)
             .border(2.dp, Color.Black)
             .background(Color.Blue)
@@ -208,9 +253,14 @@ fun Connect4Cell(state: Int, onClick: () -> Unit) {
 
 @Composable
 fun Circle(color: Color) {
+    val context = LocalContext.current
+    val metrics = context.resources.displayMetrics
+    val screenWidth = metrics.widthPixels / metrics.density
+    val screenHeight = metrics.heightPixels / metrics.density
+    val cellSize = ((screenWidth/10)*.66).dp
     Box(
         modifier = Modifier
-            .size(40.dp)
+            .size(cellSize)
             .background(color, shape = CircleShape)
     )
 }
@@ -223,7 +273,6 @@ fun handleCellClick(
     moveStack: Stack<List<MutableList<Int>>>,
     updateBoard: (List<MutableList<Int>>, Int) -> Unit
 ) {
-    // Save the current board state to the stack before updating
     moveStack.push(board.map { it.toMutableList() })
 
     for (r in board.size - 1 downTo 0) {
@@ -280,7 +329,7 @@ fun isDraw(board: List<MutableList<Int>>): Boolean {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview(isSinglePlayer: Boolean = false) {
+fun DefaultPreview(isSinglePlayer: Boolean = false,gridWidth: Int = 7, gridHeight: Int = 6) {
     MAD_Assignmen01_ConnectFourTheme {
         Column(
             modifier = Modifier
@@ -290,7 +339,7 @@ fun DefaultPreview(isSinglePlayer: Boolean = false) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             profileDisplay()
-            Connect4Board(isSinglePlayer = isSinglePlayer)
+            Connect4Board(gridHeight, gridWidth,isSinglePlayer = isSinglePlayer)
         }
     }
 }
