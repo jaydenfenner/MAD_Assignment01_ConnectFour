@@ -33,7 +33,6 @@ fun AppNavigation() {
             val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
             DefaultPreview(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name)
         }
-
         composable(Routes.GAME_2P + "/{gridWidth}/{gridHeight}/{player1Name}/{player2Name}") { backStackEntry ->
             val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
             val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
