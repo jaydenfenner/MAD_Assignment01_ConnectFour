@@ -18,10 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import android.content.Context
+import android.content.res.Configuration
 import android.util.DisplayMetrics
 import androidx.compose.material3.TextField
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -122,13 +125,59 @@ fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
 
 
 @Composable
-fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
-    var board by remember { mutableStateOf(List(rows) { MutableList(columns) { 0 } }) }
-    var currentPlayer by remember { mutableStateOf(1) }
-    var gameMessage by remember { mutableStateOf("") }
-    var gameOver by remember { mutableStateOf(false) }
+fun GameControls(
+    moveStack: Stack<Board>,
+    onUndo: (Board, Int, String) -> Unit,
+    onReset: (Int, Int) -> Unit,
+    rows: Int,
+    columns: Int,
+    currentPlayer: MutableState<Int>,
+    gameMessage: MutableState<String>,
+    gameOver: MutableState<Boolean>
+) {
+    Button(
+        onClick = {
+            if (moveStack.isNotEmpty()) {
+                val previousBoard = moveStack.pop()
+                val newCurrentPlayer = if (currentPlayer.value == 1) 2 else 1
+                onUndo(previousBoard, newCurrentPlayer, "")
+            }
+        },
+        modifier = Modifier.padding(top = 16.dp)
+    ) {
+        Text(text = "Undo Move")
+    }
+
+    Button(
+        onClick = {
+            moveStack.clear()
+            onReset(rows, columns)
+        },
+        modifier = Modifier.padding(top = 16.dp)
+    ) {
+        Text(text = "Reset Game")
+    }
+}
+
+
+
+
+@Composable
+fun Connect4Board(
+    rows: Int = 6,
+    columns: Int = 7,
+    isSinglePlayer: Boolean,
+    gameViewModel: GameViewModel = viewModel()
+) {
+    val board = gameViewModel.board.value
+    val currentPlayer = gameViewModel.currentPlayer
+    val gameMessage = gameViewModel.gameMessage
+    val gameOver = gameViewModel.gameOver
+    val moveStack = gameViewModel.moveStack
     val ai = Connect4AI()
-    val moveStack = remember { Stack<List<MutableList<Int>>>() }
+
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -140,36 +189,39 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
             Row {
                 for (col in 0 until columns) {
                     Connect4Cell(
-                        state = board[row][col],
+                        state = board.boardState[row][col],
                         onClick = {
-                            if (!gameOver) {
-                                handleCellClick(row, col, board, currentPlayer, moveStack) { updatedBoard, nextPlayer ->
-                                    board = updatedBoard
-                                    val winner = checkWin(board)
-                                    if (winner != 0) {
-                                        gameMessage = "Player $winner Wins!"
-                                        gameOver = true
-                                    } else if (isDraw(board)) {
-                                        gameMessage = "It's a Draw!"
-                                        gameOver = true
-                                    } else {
-                                        currentPlayer = nextPlayer
+                            if (!gameOver.value) {
+                                handleCellClick(
+                                    row,
+                                    col,
+                                    board,
+                                    currentPlayer.value,
+                                    moveStack
+                                ) { updatedBoard, nextPlayer ->
+                                    gameViewModel.saveMove()
+                                    gameViewModel.board.value = updatedBoard
+                                    gameViewModel.handleWin()
+
+                                    if (!gameOver.value) {
+                                        currentPlayer.value = nextPlayer
                                     }
 
-                                    if (isSinglePlayer && currentPlayer == 2 && !gameOver) {
-                                        val aiMove = ai.getMove(board)
+                                    if (isSinglePlayer && currentPlayer.value == 2 && !gameOver.value) {
+                                        val aiMove = ai.getMove(board.boardState)
                                         if (aiMove != -1) {
-                                            handleCellClick(0, aiMove, board, 2, moveStack) { updatedBoard, nextPlayer ->
-                                                board = updatedBoard
-                                                val aiWinner = checkWin(board)
-                                                if (aiWinner != 0) {
-                                                    gameMessage = "Player $aiWinner Wins!"
-                                                    gameOver = true
-                                                } else if (isDraw(board)) {
-                                                    gameMessage = "It's a Draw!"
-                                                    gameOver = true
-                                                } else {
-                                                    currentPlayer = nextPlayer
+                                            handleCellClick(
+                                                0,
+                                                aiMove,
+                                                board,
+                                                2,
+                                                moveStack
+                                            ) { updatedBoard, nextPlayer ->
+                                                gameViewModel.board.value = updatedBoard
+                                                gameViewModel.handleWin()
+
+                                                if (!gameOver.value) {
+                                                    currentPlayer.value = nextPlayer
                                                 }
                                             }
                                         }
@@ -181,37 +233,34 @@ fun Connect4Board(rows: Int = 6, columns: Int = 7, isSinglePlayer: Boolean) {
                 }
             }
         }
-        Text(text = "Current Turn: Player $currentPlayer", modifier = Modifier.padding(top = 16.dp))
+        Text(
+            text = "Current Turn: Player ${currentPlayer.value}",
+            modifier = Modifier.padding(top = 16.dp)
+        )
 
-        if (gameMessage.isNotEmpty()) {
-            Text(text = gameMessage, modifier = Modifier.padding(top = 16.dp), color = Color.Red)
+        if (gameMessage.value.isNotEmpty()) {
+            Text(
+                text = gameMessage.value,
+                modifier = Modifier.padding(top = 16.dp),
+                color = Color.Red
+            )
         }
 
-        Button(
-            onClick = {
-                if (moveStack.isNotEmpty()) {
-                    board = moveStack.pop()
-                    currentPlayer = if (currentPlayer == 1) 2 else 1
-                    gameMessage = ""
-                    gameOver = false
-                }
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Undo Move")
-        }
-
-        Button(
-            onClick = {
-                moveStack.clear()
-                board = List(rows) { MutableList(columns) { 0 } }
-                currentPlayer = 1
-                gameMessage = ""
-                gameOver = false
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Reset Game")
+        if (!isLandscape) {
+            GameControls(
+                moveStack = moveStack,
+                onUndo = { previousBoard, newCurrentPlayer, message ->
+                    gameViewModel.undoMove()
+                },
+                onReset = { rows, columns ->
+                    gameViewModel.resetBoard(rows, columns)
+                },
+                rows = rows,
+                columns = columns,
+                currentPlayer = currentPlayer,
+                gameMessage = gameMessage,
+                gameOver = gameOver
+            )
         }
     }
 }
@@ -264,64 +313,20 @@ fun Circle(color: Color, cellSize: Dp) {
 fun handleCellClick(
     row: Int,
     col: Int,
-    board: List<MutableList<Int>>,
+    board: Board,
     currentPlayer: Int,
-    moveStack: Stack<List<MutableList<Int>>>,
-    updateBoard: (List<MutableList<Int>>, Int) -> Unit
+    moveStack: Stack<Board>,
+    updateBoard: (Board, Int) -> Unit
 ) {
-    moveStack.push(board.map { it.toMutableList() })
+    moveStack.push(board.copy())
 
-    for (r in board.size - 1 downTo 0) {
-        if (board[r][col] == 0) {
-            board[r][col] = currentPlayer
-            updateBoard(board, if (currentPlayer == 1) 2 else 1)
-            break
-        }
+    if (board.placePiece(col, currentPlayer)) {
+        updateBoard(board, if (currentPlayer == 1) 2 else 1)
     }
 }
 
-fun checkWin(board: List<MutableList<Int>>): Int {
-    for (row in board.indices) {
-        for (col in board[row].indices) {
-            if (board[row][col] != 0) {
-                val player = board[row][col]
 
-                if (col + 3 < board[row].size &&
-                    player == board[row][col + 1] &&
-                    player == board[row][col + 2] &&
-                    player == board[row][col + 3]) {
-                    return player
-                }
 
-                if (row + 3 < board.size &&
-                    player == board[row + 1][col] &&
-                    player == board[row + 2][col] &&
-                    player == board[row + 3][col]) {
-                    return player
-                }
-
-                if (row + 3 < board.size && col + 3 < board[row].size &&
-                    player == board[row + 1][col + 1] &&
-                    player == board[row + 2][col + 2] &&
-                    player == board[row + 3][col + 3]) {
-                    return player
-                }
-
-                if (row - 3 >= 0 && col + 3 < board[row].size &&
-                    player == board[row - 1][col + 1] &&
-                    player == board[row - 2][col + 2] &&
-                    player == board[row - 3][col + 3]) {
-                    return player
-                }
-            }
-        }
-    }
-    return 0
-}
-
-fun isDraw(board: List<MutableList<Int>>): Boolean {
-    return board.all { row -> row.all { it != 0 } }
-}
 
 @Preview(showBackground = true)
 @Composable
