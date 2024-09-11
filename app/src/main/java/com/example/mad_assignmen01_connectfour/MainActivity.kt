@@ -1,97 +1,63 @@
 package com.example.mad_assignmen01_connectfour
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
 
-//Message Test
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MAD_Assignmen01_ConnectFourTheme {
-                val dataViewModel = viewModel<ConnectFourViewModel>()
                 AppNavigation()
             }
         }
     }
 }
 
-@Composable
-fun Menu() {
-    val orientation = LocalConfiguration.current.orientation
-    when (orientation) {
-        Configuration.ORIENTATION_PORTRAIT -> MenuPortrait()
-        else -> MenuLandscape()
-    }
-}
-
-@Composable
-fun MenuPortrait() {
-    Column(Modifier.fillMaxSize()) {
-        Text("Portrait")
-    }
-}
-
-@Composable
-fun MenuLandscape() {
-    Column(Modifier.fillMaxSize()) {
-        Text("Landscape")
-    }
-}
+const val previewWidthDp = 360
+const val previewHeightDp = 740
+const val previewTabletWidthDp = 800
+const val previewTabletHeightDp = 1280
 
 // **********************************************************************************
 // Previews:         (Ignoring large screens for now)
 // **********************************************************************************
-
-@Preview(name = "5-inch Device Portrait", widthDp = 360, heightDp = 640,
-    showBackground = true)
 @Composable
-fun MainContentBoxPreview5Inch() {
+fun ConnectFourApp_Preview() {
     MAD_Assignmen01_ConnectFourTheme {
-        Menu()
+        AppNavigation()
     }
 }
 
-@Preview(name = "5-inch Device Landscape", widthDp = 640, heightDp = 360,
-    showBackground = true)
+@Preview(name = "5-inch Device Portrait",
+    widthDp = previewWidthDp, heightDp = previewHeightDp, showBackground = true)
 @Composable
-fun MainContentBoxPreview5InchLand() {
-    MAD_Assignmen01_ConnectFourTheme {
-        Menu()
-    }
+fun App_Preview5Inch() {
+    ConnectFourApp_Preview()
+}
+@Preview(name = "5-inch Device Landscape",
+    widthDp = previewHeightDp, heightDp = previewWidthDp, showBackground = true)
+@Composable
+fun App_Preview5InchLand() {
+    ConnectFourApp_Preview()
 }
 
-//@Preview(name = "10-inch Tablet Portrait", widthDp = 600, heightDp = 960,
-//    showBackground = true)
-//@Composable
-//fun MainContentBoxPreview10InchTablet() {
-//    MAD_Assignmen01_ConnectFourTheme {
-//        Menu()
-//    }
-//}
-//
-//@Preview(name = "10-inch Tablet Landscape", widthDp = 960, heightDp = 600,
-//    showBackground = true)
-//@Composable
-//fun MainContentBoxPreview10InchTabletLand() {
-//    MAD_Assignmen01_ConnectFourTheme {
-//        Menu()
-//    }
-//}
+// TODO check if we need these, my friend got 100% with no tablet layouts
+@Preview(name = "10-inch Tablet Portrait",
+    widthDp = previewTabletWidthDp, heightDp = previewTabletHeightDp, showBackground = true)
+@Composable
+fun App_Preview10InchTablet() {
+    ConnectFourApp_Preview()
+}
+@Preview(name = "10-inch Tablet Landscape",
+    widthDp = previewTabletHeightDp, heightDp = previewTabletWidthDp, showBackground = true)
+@Composable
+fun App_Preview10InchTabletLand() {
+    ConnectFourApp_Preview()
+}
