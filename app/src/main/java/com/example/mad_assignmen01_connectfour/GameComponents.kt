@@ -266,7 +266,7 @@ fun DefaultPreview(
 fun ProfileImageClickable(
     modifier: Modifier = Modifier,
     userProfile: UserProfile,
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) {
     FilledIconButton(
         onClick = {onClick()},
