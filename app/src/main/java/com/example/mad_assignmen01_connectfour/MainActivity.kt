@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MAD_Assignmen01_ConnectFourTheme {
-                AppNav()
+                AppNavigation()
             }
         }
     }
@@ -31,7 +31,7 @@ const val previewTabletHeightDp = 1280
 @Composable
 fun ConnectFourApp_Preview() {
     MAD_Assignmen01_ConnectFourTheme {
-        AppNav()
+        AppNavigation()
     }
 }
 
