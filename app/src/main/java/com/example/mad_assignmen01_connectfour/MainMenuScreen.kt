@@ -42,13 +42,13 @@ fun MainMenu_Portrait(navController: NavHostController, shVm: ConnectFourViewMod
             onClick = { navController.navigate(Routes.GAME_START_MENU_1P) },
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            Text(text = "Start 2 Player Game")
+            Text(text = "Start 1 Player Game")
         }
         Button(
             onClick = { navController.navigate(Routes.GAME_START_MENU_2P) },
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            Text(text = "Start 1 Player Game")
+            Text(text = "Start 2 Player Game")
         }
         Button(
             onClick = { navController.navigate(Routes.EDIT_PROFILES) },
