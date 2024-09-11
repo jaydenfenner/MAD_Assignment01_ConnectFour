@@ -34,12 +34,6 @@ fun Start1PGameScreen(navController: NavHostController, shVm: ConnectFourViewMod
     }
 }
 
-// TODO create new profile
-// TODO select profile to edit
-// TODO choose name
-// TODO choose avatar
-// TODO choose colour
-
 @Composable
 fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourViewModel) {
     var player1Name by remember { mutableStateOf("Player 1") }

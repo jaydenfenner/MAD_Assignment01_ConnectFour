@@ -1,9 +1,6 @@
 package com.example.mad_assignmen01_connectfour
 
-import android.content.Context
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
