@@ -1,9 +1,6 @@
 package com.example.mad_assignmen01_connectfour
 
-import android.content.Context
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 
 data object Routes{
     const val MAIN_MENU = "mainMenu"
+    const val EDIT_PROFILES = "editProfiles"
     const val GAME_START_MENU_1P = "gameStart/1Player"
     const val GAME_START_MENU_2P = "gameStart/2Player"
     const val GAME_1P = "connect4/1player"
@@ -24,20 +22,18 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = Routes.MAIN_MENU) {
         composable(Routes.MAIN_MENU) {MainMenuScreen(navController, sharedViewModel) }
-        composable(Routes.GAME_START_MENU_1P) {
-            GameStartMenu(navController, isSinglePlayer = true) }
-        composable(Routes.GAME_START_MENU_2P) {
-            GameStartMenu(navController, isSinglePlayer = false) }
+        composable(Routes.EDIT_PROFILES) { EditProfilesScreen(navController, sharedViewModel) }
+        composable(Routes.GAME_START_MENU_1P) { Start1PGameScreen(navController, sharedViewModel) }
+        composable(Routes.GAME_START_MENU_2P) { Start2PGameScreen(navController, sharedViewModel) }
         composable(Routes.GAME_1P) { DefaultPreview(isSinglePlayer = true) }
         composable(Routes.GAME_2P) { DefaultPreview(isSinglePlayer = false) }
-        composable("connect4/1player/{gridWidth}/{gridHeight}/{player1Name}") { backStackEntry ->
+        composable(Routes.GAME_1P + "/{gridWidth}/{gridHeight}/{player1Name}") { backStackEntry ->
             val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
             val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
             val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"
             DefaultPreview(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight, player1Name = player1Name)
         }
-
-        composable("connect4/2player/{gridWidth}/{gridHeight}/{player1Name}/{player2Name}") { backStackEntry ->
+        composable(Routes.GAME_2P + "/{gridWidth}/{gridHeight}/{player1Name}/{player2Name}") { backStackEntry ->
             val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
             val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
             val player1Name = backStackEntry.arguments?.getString("player1Name") ?: "Player 1"

@@ -1,12 +1,11 @@
 package com.example.mad_assignmen01_connectfour
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 class ConnectFourViewModel: ViewModel() {
     /**
@@ -17,14 +16,35 @@ class ConnectFourViewModel: ViewModel() {
     fun clearExampleVar(): Unit {
         exampleVar = ""
     }
+
+    val computerProfile = UserProfile("AI", AvatarIDs.COMPUTER)
+    var player1Profile by mutableStateOf(UserProfile("Player 1", AvatarIDs.BLANK_AVATAR))
+    var player2Profile by mutableStateOf(UserProfile("Player 2", AvatarIDs.BLANK_AVATAR))
+
+    var userProfiles = mutableStateListOf<UserProfile>(
+//        UserProfile("Player 1", AvatarIDs.BLANK_AVATAR),
+//        UserProfile("Player 2",  AvatarIDs.BLANK_AVATAR)
+    )
+}
+class UserProfile(pName: String, pAvatarID: Int) {
+    var name by mutableStateOf("")
+    var avatarID by mutableIntStateOf(AvatarIDs.BLANK_AVATAR)
+    var numberOfWins by mutableIntStateOf(0)
+    var numberOfLosses by mutableIntStateOf(0)
+    var numberOfDraws by mutableIntStateOf(0)
+
+    init {
+        name = pName
+        avatarID = pAvatarID
+    }
+
+}
+// **** CREATE LOCALLY SCOPED VIEW MODEL TO PASS TO CHILDREN
+//val localViewModel = viewModel<VIEWMODEL_CLASS>()\
+
+data object AvatarIDs {
+    val POO_EMOJI = R.drawable.poo_emoji
+    val BLANK_AVATAR = R.drawable.blank_avatar
+    val COMPUTER = R.drawable.computer_avatar
 }
 
-// **** ACCESS VIEW MODEL SCOPED TO THE ACTIVITY FROM ANY COMPOSABLE:
-//val activityViewModel = viewModel<ConnectFourViewModel>(
-//    viewModelStoreOwner = LocalContext.current as ComponentActivity
-//)
-
-// **** CREATE LOCALLY SCOPED VIEW MODEL TO PASS TO CHILDREN
-//val localViewModel = viewModel<VIEWMODEL_CLASS>()
-
-// **** NOTE YOU CAN PASS ANY VIEW MODEL AS AN ARGUMENT

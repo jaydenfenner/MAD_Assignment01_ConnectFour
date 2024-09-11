@@ -1,19 +1,34 @@
 package com.example.mad_assignmen01_connectfour
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -331,6 +346,7 @@ fun handleCellClick(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview(
+    shVm: ConnectFourViewModel = ConnectFourViewModel(),
     isSinglePlayer: Boolean = false,
     gridWidth: Int = 7,
     gridHeight: Int = 6,
@@ -345,17 +361,34 @@ fun DefaultPreview(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            profileDisplay(player1Name, if (isSinglePlayer) "AI" else player2Name)
+            ProfileDisplay(
+                leftProfile = shVm.player1Profile,
+                rightProfile = if (isSinglePlayer) shVm.computerProfile else shVm.player2Profile)
             Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer)
         }
     }
 }
 
-
-
+@Composable
+fun ProfileImageClickable(
+    modifier: Modifier = Modifier,
+    userProfile: UserProfile,
+    onClick: () -> Unit
+) {
+    FilledIconButton(
+        onClick = {onClick()},
+        modifier = modifier,
+        colors = IconButtonDefaults.filledIconButtonColors(Color.Yellow)
+    ) {
+        Image(
+            painter = painterResource(id = userProfile.avatarID),
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize())
+    }
+}
 
 @Composable
-fun profileDisplay(player1Name: String, player2Name: String) {
+fun ProfileDisplay(leftProfile: UserProfile, rightProfile: UserProfile) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -367,13 +400,8 @@ fun profileDisplay(player1Name: String, player2Name: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(8.dp)
         ) {
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.size(75.dp)
-            ) {
-                Text(text = "")
-            }
-            Text(text = player1Name)
+            ProfileImageClickable(Modifier.size(75.dp), leftProfile) { /* TODO */ }
+            Text(text = leftProfile.name)
         }
 
         Spacer(modifier = Modifier.width(100.dp))
@@ -382,13 +410,8 @@ fun profileDisplay(player1Name: String, player2Name: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(8.dp)
         ) {
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.size(75.dp)
-            ) {
-                Text(text = "")
-            }
-            Text(text = player2Name)
+            ProfileImageClickable(Modifier.size(75.dp), rightProfile) { /* TODO */ }
+            Text(text = rightProfile.name)
         }
     }
 }
