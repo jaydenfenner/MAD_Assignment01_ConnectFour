@@ -62,14 +62,6 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun Test() {
-    val sharedViewModel = viewModel<ConnectFourViewModel>()
-    GameScreen(sharedViewModel,
-        isSinglePlayer = true, gridWidth = 7, gridHeight = 6)
-}
-
 @Composable
 fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourViewModel) {
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {

@@ -1,8 +1,9 @@
 package com.example.mad_assignmen01_connectfour
 
 
+
 /**
- * boardState is a list of mutable lists, indexed as []y,x]
+ * boardState is a list of mutable lists, indexed as [y,x]
  */
 data class Board(
     val rows: Int,
@@ -13,6 +14,7 @@ data class Board(
         boardState = List(rows) { MutableList(columns) { 0 } }
     }
 
+    /** place circle in column, return false if move is invalid */
     fun placePiece(col: Int, player: Int): Boolean {
         for (r in rows - 1 downTo 0) {
             if (boardState[r][col] == 0) {
