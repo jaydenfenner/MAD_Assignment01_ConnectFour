@@ -53,19 +53,24 @@ fun GameControls(
 @Preview(showBackground = true)
 @Composable
 fun Preview_Connect4Board() {
+    val shVm = viewModel<ConnectFourViewModel>()
     val gameVm = viewModel<GameViewModel>()
     gameVm.initialise(
         boardWidth = 7,
         boardHeight = 6,
-        is1P = true
+        is1P = true,
+        p1_profile = shVm.player1Profile,
+        p2_profile = shVm.computerProfile,
     )
     Connect4Board(gameVm)
 }
 
 @Composable
-fun Connect4Board(
-    gameVm: GameViewModel,
-) {
+fun Connect4Board(gameVm: GameViewModel) {
+    val currentPlayerProfile = when (gameVm.currentPlayer) {
+        1 -> gameVm.p1Profile
+        else -> gameVm.p2Profile
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -96,7 +101,7 @@ fun Connect4Board(
             }
         }
         Text(
-            text = "Current Turn: Player ${gameVm.currentPlayer}",
+            text = "Current Turn: ${currentPlayerProfile.name}",
             modifier = Modifier.padding(top = 16.dp)
         )
 
@@ -156,18 +161,12 @@ fun Circle(color: Color, cellSize: Dp) {
 @Preview(showBackground = true)
 @Composable
 fun Preview_ProfileDisplay() {
-    val vm = viewModel<ConnectFourViewModel>()
     val gvm = viewModel<GameViewModel>()
-    ProfileDisplay(
-        leftProfile = vm.player1Profile,
-        rightProfile = vm.computerProfile,
-        gameVm = gvm
-    )
+    ProfileDisplay(gameVm = gvm)
 }
 
 @Composable
-fun ProfileDisplay(gameVm: GameViewModel,
-    leftProfile: UserProfile, rightProfile: UserProfile) {
+fun ProfileDisplay(gameVm: GameViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -177,7 +176,7 @@ fun ProfileDisplay(gameVm: GameViewModel,
     ) {
         ProfileSelectorGridItem(
             isSelected = (gameVm.currentPlayer == 1),
-            userProfile = leftProfile,
+            userProfile = gameVm.p1Profile,
             onClick = {}
         )
 
@@ -185,7 +184,7 @@ fun ProfileDisplay(gameVm: GameViewModel,
 
         ProfileSelectorGridItem(
             isSelected = (gameVm.currentPlayer == 2),
-            userProfile = rightProfile,
+            userProfile = gameVm.p2Profile,
             onClick = {}
         )
     }

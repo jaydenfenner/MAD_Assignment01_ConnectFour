@@ -17,21 +17,19 @@ class GameViewModel() : ViewModel() {
     var height = 1
         private set
     private val ai = Connect4AI()
-    var isSinglePlayer by mutableStateOf(false)
+    var isSinglePlayer = false
+    var p1Profile = UserProfile(pName = "", pAvatarID = 0)
+    var p2Profile = UserProfile(pName = "", pAvatarID = 0)
 
-    fun initialise(boardWidth: Int, boardHeight: Int, is1P: Boolean) {
+    fun initialise(boardWidth: Int, boardHeight: Int,
+                   is1P: Boolean, p1_profile: UserProfile, p2_profile: UserProfile,
+    ) {
         width = boardWidth
         height = boardHeight
         board = Board(rows = height, columns = width)
         isSinglePlayer = is1P
-    }
-
-    fun setIsSinglePlayerTrue() {
-        isSinglePlayer = true
-    }
-
-    fun changeIsSinglePlayer(is1P: Boolean) {
-        isSinglePlayer = is1P
+        p1Profile = p1_profile
+        p2Profile = p2_profile
     }
 
     var board by mutableStateOf(Board(rows = height, columns = width)) // individual board state
@@ -50,7 +48,7 @@ class GameViewModel() : ViewModel() {
     }
 
     /** update game message if game is over */
-    fun checkForAndHandleWin() {
+    private fun checkForAndHandleWin() {
         val winner = board.checkWin()
         if (winner != 0) {
             gameMessage = "Player $winner Wins!"
@@ -59,11 +57,6 @@ class GameViewModel() : ViewModel() {
             gameMessage = "It's a Draw!"
             isGameOver = true
         }
-    }
-
-    /** push current board state */
-    fun saveStateToUndoStack() {
-        moveStack.push(board.copy())
     }
 
     fun makeAIMove() {
