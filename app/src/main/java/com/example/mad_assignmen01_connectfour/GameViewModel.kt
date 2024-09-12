@@ -20,7 +20,7 @@ class GameViewModel() : ViewModel() {
     var isSinglePlayer = false
     var p1Profile = UserProfile(pName = "", pAvatarID = 0)
     var p2Profile = UserProfile(pName = "", pAvatarID = 0)
-    var hasBeenInitialised by mutableStateOf(false)
+    private var hasBeenInitialised by mutableStateOf(false)
 
     fun initialise(boardWidth: Int, boardHeight: Int,
                    is1P: Boolean, p1_profile: UserProfile, p2_profile: UserProfile,

@@ -49,10 +49,9 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
         Text(text = "Single Player Game")
         GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
             prompt = "Please select a profile to use",
+            selectedColor = shVm.leftPlayerDiskColour,
             defaultProfile = shVm.player1Profile,
-            onProfileSelected = {
-                shVm.singlePlayerProfileSelection = it
-            },
+            onProfileSelected = { shVm.singlePlayerProfileSelection = it },
         )
         StartGameScreenButtons(
             onStartStandard = { navController.navigate(Routes.GAME_1P_STANDARD_7_6) },
@@ -71,10 +70,9 @@ fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourVie
             Column(Modifier.weight(1f)) {
                 GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
                     prompt = "Please select a profile to use",
+                    selectedColor = shVm.leftPlayerDiskColour,
                     defaultProfile = shVm.player1Profile,
-                    onProfileSelected = {
-                        shVm.singlePlayerProfileSelection = it
-                    },
+                    onProfileSelected = { shVm.singlePlayerProfileSelection = it },
                 )
             }
             StartGameScreenButtons(

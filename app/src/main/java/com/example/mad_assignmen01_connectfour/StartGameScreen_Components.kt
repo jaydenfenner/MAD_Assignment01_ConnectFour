@@ -1,5 +1,6 @@
 package com.example.mad_assignmen01_connectfour
 
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,11 +52,13 @@ fun StartGameScreenButtons(
 @Composable
 fun GamePlayerSelector(shVm: ConnectFourViewModel,
                        prompt: String,
+                       selectedColor: Color,
                        selectedProfile: UserProfile,
                        defaultProfile: UserProfile,
                        unavailableProfile: UserProfile? = null,
                        onProfileSelected: (profile: UserProfile) -> Unit,
 ) {
+    val context = LocalContext.current
     Column(modifier = Modifier
         .fillMaxWidth()
         .heightIn(max = 400.dp)) {
@@ -69,6 +74,7 @@ fun GamePlayerSelector(shVm: ConnectFourViewModel,
             ) {
                 item(span = {GridItemSpan(maxLineSpan)}) { Text("Default Profiles:") }
                 item { ProfileSelectorGridItem(
+                    selectedColor = selectedColor,
                     thisItemProfile = defaultProfile,
                     selectedProfile = selectedProfile,
                     unavailableProfile = unavailableProfile,
@@ -83,10 +89,18 @@ fun GamePlayerSelector(shVm: ConnectFourViewModel,
                 }
                 items(shVm.userProfiles) {profile ->
                     ProfileSelectorGridItem(
+                        selectedColor = selectedColor,
                         thisItemProfile = profile,
                         selectedProfile = selectedProfile,
                         unavailableProfile = unavailableProfile,
-                        onClick = { onProfileSelected(profile) })
+                        onClick = {
+                            if (unavailableProfile == profile) {
+                                Toast.makeText(context, "This profile is already taken!",
+                                    Toast.LENGTH_SHORT).show()
+                            } else {
+                                onProfileSelected(profile)
+                            }
+                        })
                 }
             }
         }
@@ -102,6 +116,7 @@ fun Preview_GamePlayerSelector() {
     GamePlayerSelector(shVm = shVm, 
         selectedProfile = selectedProfile, defaultProfile = shVm.player1Profile,
         onProfileSelected = {selectedProfile = it},
-        prompt = "Please select a profile to use"
+        prompt = "Please select a profile to use",
+        selectedColor = Color.Red,
     )
 }

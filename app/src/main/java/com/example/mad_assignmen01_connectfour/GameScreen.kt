@@ -68,8 +68,8 @@ fun GameScreen_Portrait(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProfileDisplay(gameVm = gameVm)
-        Connect4Board(gameVm = gameVm, navController = navController)
+        ProfileDisplay(shVm = shVm, gameVm = gameVm)
+        Connect4Board(shVm, gameVm, navController = navController)
     }
 }
 
