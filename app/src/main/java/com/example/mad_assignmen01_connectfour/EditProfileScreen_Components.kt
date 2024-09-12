@@ -65,15 +65,17 @@ fun ProfileSelectorGridItem(
     selectedProfile: UserProfile? = null,
     unavailableProfile: UserProfile? = null,
     onClick: () -> Unit = {},
+    selectedColor: Color = Color.Cyan,
     isUnavailable: Boolean = (unavailableProfile == thisItemProfile),
     isSelected: Boolean = (selectedProfile == thisItemProfile),
 ) {
     GridIconButton(
         onClick = onClick,
-        enabledColor = if(isSelected) Color.Cyan else Color.LightGray, // note disabled is darker
+        color = if(isSelected) selectedColor
+                    else if(isUnavailable) Color.DarkGray
+                        else Color.LightGray,
         imageID = thisItemProfile.avatarID,
-        text = thisItemProfile.name,
-        enabled = !isUnavailable,
+        text = thisItemProfile.name
     )
 }
 
@@ -95,19 +97,17 @@ fun preview_disabled() {
 
 @Composable
 fun GridIconButton(
-    enabledColor: Color = Color.LightGray,
+    color: Color = Color.LightGray,
     imageID: Int,
     onClick: () -> Unit = {},
     text: String = "NO TEXT",
-    enabled: Boolean = true,
 ) {
     Column(Modifier.padding(5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         FilledIconButton(
-            enabled = enabled,
             onClick = { onClick() },
             modifier = Modifier.size(80.dp),
             colors = IconButtonDefaults.filledIconButtonColors(
-                containerColor = enabledColor, disabledContainerColor = Color.DarkGray)
+                containerColor = color, disabledContainerColor = Color.DarkGray)
         ) {
             Image(
                 painter = painterResource(id = imageID),
@@ -177,7 +177,7 @@ fun ProfileSelector(shVm: ConnectFourViewModel, localVm: EditProfilesViewModel,
                         onClick = { onProfileSelected(profile) })
                 }
                 item {
-                    GridIconButton(enabledColor = Color.Gray, imageID = R.drawable.add_symbol,
+                    GridIconButton(color = Color.Gray, imageID = R.drawable.add_symbol,
                         onClick = onAddButtonClicked)
                 }
             }

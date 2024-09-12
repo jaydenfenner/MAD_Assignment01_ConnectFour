@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,12 +21,13 @@ import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectF
 @Composable
 fun MainMenuScreen(navController: NavHostController, shVm: ConnectFourViewModel) {
     val orientation = LocalConfiguration.current.orientation
-    when (orientation) {
-        Configuration.ORIENTATION_PORTRAIT ->
-            MainMenu_Portrait(navController = navController, shVm = shVm)
-        else ->
-//            MenuLandscape()
-            MainMenu_Portrait(navController = navController, shVm = shVm)
+    InsetContent {
+        when (orientation) {
+            Configuration.ORIENTATION_PORTRAIT ->
+                MainMenu_Portrait(navController = navController, shVm = shVm)
+            else ->
+                MainMenu_Portrait(navController = navController, shVm = shVm)
+        }
     }
 }
 
@@ -35,7 +37,8 @@ fun MainMenu_Portrait(navController: NavHostController, shVm: ConnectFourViewMod
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(text = "Main Menu")
         Button(
@@ -55,6 +58,12 @@ fun MainMenu_Portrait(navController: NavHostController, shVm: ConnectFourViewMod
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "Edit Profiles")
+        }
+        Button(
+            onClick = { navController.navigate(Routes.CHANGE_DISK_COLORS) },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Change Player Disk Colours")
         }
     }
 }

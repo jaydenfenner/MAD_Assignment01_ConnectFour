@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 data object Routes{
     const val MAIN_MENU = "mainMenu"
     const val EDIT_PROFILES = "editProfiles"
+    const val CHANGE_DISK_COLORS = "changeDiskColors"
     const val START_GAME_MENU_1P = "gameStart/1Player"
     const val START_GAME_MENU_2P = "gameStart/2Player"
     const val GAME_1P_STANDARD_7_6 = "connect4/1player/standard"
@@ -27,6 +28,7 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = Routes.MAIN_MENU) {
         composable(Routes.MAIN_MENU) {MainMenuScreen(navController, sharedViewModel) }
         composable(Routes.EDIT_PROFILES) { EditProfilesScreen(sharedViewModel) }
+        composable(Routes.CHANGE_DISK_COLORS) { ChangeDisksScreen(sharedViewModel) }
         composable(Routes.START_GAME_MENU_1P) { Start1PGameScreen(navController, sharedViewModel) }
         composable(Routes.START_GAME_MENU_2P) { Start2PGameScreen(navController, sharedViewModel) }
 

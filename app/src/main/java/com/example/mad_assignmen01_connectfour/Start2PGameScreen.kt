@@ -45,12 +45,14 @@ fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
             unavailableProfile = shVm.twoPlayerProfileSelectionP2,
             onProfileSelected = { shVm.twoPlayerProfileSelectionP1 = it },
             prompt = "Select Player 1 Profile",
+            selectedColor = shVm.leftPlayerDiskColour,
         )
         GamePlayerSelector(shVm = shVm, selectedProfile = shVm.twoPlayerProfileSelectionP2,
             defaultProfile = shVm.player2Profile,
             unavailableProfile = shVm.twoPlayerProfileSelectionP1,
             onProfileSelected = { shVm.twoPlayerProfileSelectionP2 = it },
             prompt = "Select Player 2 Profile",
+            selectedColor = shVm.rightPlayerDiskColour
         )
         StartGameScreenButtons(
             onStartStandard = { navController.navigate(Routes.GAME_2P_STANDARD_7_6) },

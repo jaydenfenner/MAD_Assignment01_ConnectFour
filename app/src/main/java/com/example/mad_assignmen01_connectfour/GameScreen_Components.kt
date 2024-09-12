@@ -88,12 +88,12 @@ fun Preview_Connect4Board() {
         p1_profile = shVm.player1Profile,
         p2_profile = shVm.computerProfile,
     )
-    Connect4Board(gameVm, navController = navController)
+    Connect4Board(shVm, gameVm, navController = navController)
 }
 
 @Composable
 fun Connect4Board(
-    gameVm: GameViewModel,
+    shVm: ConnectFourViewModel, gameVm: GameViewModel,
     navController: NavHostController
 ) {
     val currentPlayerProfile = when (gameVm.currentPlayer) {
@@ -110,6 +110,7 @@ fun Connect4Board(
             Row {
                 for (x in 0 until gameVm.width) {
                     Connect4Cell(
+                        shVm = shVm,
                         totalCols = gameVm.width,
                         totalRows = gameVm.height,
                         playerNumber = gameVm.board.boardState[y][x],
@@ -150,6 +151,7 @@ fun Connect4Board(
 
 @Composable
 fun Connect4Cell(totalRows: Int, totalCols: Int,
+                 shVm: ConnectFourViewModel,
         playerNumber: Int, onClick: () -> Unit) {
     val context = LocalContext.current
     val metrics = context.resources.displayMetrics
@@ -163,8 +165,8 @@ fun Connect4Cell(totalRows: Int, totalCols: Int,
     }
 
     val color = when (playerNumber) {
-        1 -> Color.Red
-        2 -> Color.Yellow
+        1 -> shVm.leftPlayerDiskColour
+        2 -> shVm.rightPlayerDiskColour
         else -> Color.White
     }
 
@@ -177,12 +179,12 @@ fun Connect4Cell(totalRows: Int, totalCols: Int,
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Circle(color = color, cellSize = cellSize)
+        GameDisk(color = color, cellSize = cellSize)
     }
 }
 
 @Composable
-fun Circle(color: Color, cellSize: Dp) {
+fun GameDisk(color: Color, cellSize: Dp) {
     Box(
         modifier = Modifier
             .size(cellSize * 0.66f)
@@ -202,11 +204,11 @@ fun Preview_ProfileDisplay() {
         p1_profile = shVm.player1Profile,
         p2_profile = shVm.computerProfile,
     )
-    ProfileDisplay(gameVm = gameVm)
+    ProfileDisplay(shVm = shVm, gameVm = gameVm)
 }
 
 @Composable
-fun ProfileDisplay(gameVm: GameViewModel) {
+fun ProfileDisplay(shVm: ConnectFourViewModel, gameVm: GameViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -215,6 +217,7 @@ fun ProfileDisplay(gameVm: GameViewModel) {
         horizontalArrangement = Arrangement.Center
     ) {
         ProfileSelectorGridItem(
+            selectedColor = shVm.leftPlayerDiskColour,
             isSelected = (gameVm.currentPlayer == 1),
             thisItemProfile = gameVm.p1Profile,
             onClick = {}
@@ -223,6 +226,7 @@ fun ProfileDisplay(gameVm: GameViewModel) {
         Spacer(modifier = Modifier.width(100.dp))
 
         ProfileSelectorGridItem(
+            selectedColor = shVm.rightPlayerDiskColour,
             isSelected = (gameVm.currentPlayer == 2),
             thisItemProfile = gameVm.p2Profile,
             onClick = {}

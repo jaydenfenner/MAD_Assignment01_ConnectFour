@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 
 // **** CREATE LOCALLY SCOPED VIEW MODEL TO PASS TO CHILDREN
@@ -16,9 +17,14 @@ class ConnectFourViewModel: ViewModel() {
     var player2Profile by mutableStateOf(UserProfile("Player 2", AvatarIDs.BLANK_AVATAR))
     var userProfiles = mutableStateListOf<UserProfile>()
 
+    // profiles for various game modes
     var singlePlayerProfileSelection by mutableStateOf(player1Profile)
     var twoPlayerProfileSelectionP1 by mutableStateOf(player1Profile)
     var twoPlayerProfileSelectionP2 by mutableStateOf(player2Profile)
+
+    // disc colours
+    var leftPlayerDiskColour by mutableStateOf(Color.Red)
+    var rightPlayerDiskColour by mutableStateOf(Color.Yellow)
 }
 
 // CLASS DEFINITIONS BELOW
@@ -69,15 +75,12 @@ val UserAvatarIDsList = listOf(
     AvatarIDs.WATER_GUN,
 )
 
-
-
-//class Disc(color: Color, isTaken: Boolean = false)
-//var disks = mapOf()<String, Disc>() {
-//    "red" to Disc(color = Color.Red)
-//    "blue" to Disc(color = Color.Blue)
-//    "green" to Disc(color = Color.Green)
-//    "yellow" to Disc(color = Color.Yellow)
-//    "cyan" to Disc(color = Color.Cyan)
-//    "magenta" to Disc(color = Color.Magenta)
-//    "purple" to Disc(color = Color.hsv(272.0F, 0.9F, 1.0F))
-//}
+val DiscColorOptions = listOf(
+    Color.Red,
+    Color.Yellow,
+    Color.Blue,
+    Color.Green,
+    Color.Cyan,
+    Color.Magenta,
+    Color.hsv(272.0F, 0.9F, 1.0F)
+)
