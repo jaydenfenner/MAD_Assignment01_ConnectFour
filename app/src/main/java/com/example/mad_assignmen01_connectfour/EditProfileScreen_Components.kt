@@ -4,15 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -27,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,16 +61,19 @@ fun AvatarSelector(localVm: EditProfilesViewModel,
 
 @Composable
 fun ProfileSelectorGridItem(
+    thisItemProfile: UserProfile,
     selectedProfile: UserProfile? = null,
-    userProfile: UserProfile,
+    unavailableProfile: UserProfile? = null,
     onClick: () -> Unit = {},
-    isSelected: Boolean = (selectedProfile == userProfile),
+    isUnavailable: Boolean = (unavailableProfile == thisItemProfile),
+    isSelected: Boolean = (selectedProfile == thisItemProfile),
 ) {
     GridIconButton(
         onClick = onClick,
-        color = if(isSelected) Color.Cyan else Color.LightGray,
-        imageID = userProfile.avatarID,
-        text = userProfile.name
+        enabledColor = if(isSelected) Color.Cyan else Color.LightGray, // note disabled is darker
+        imageID = thisItemProfile.avatarID,
+        text = thisItemProfile.name,
+        enabled = !isUnavailable,
     )
 }
 
@@ -82,21 +81,33 @@ fun ProfileSelectorGridItem(
 @Composable
 fun preview() {
     val sharedViewModel = viewModel<ConnectFourViewModel>()
-    ProfileSelectorGridItem(userProfile = sharedViewModel.player1Profile)
+    ProfileSelectorGridItem(thisItemProfile = sharedViewModel.player1Profile)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun preview_disabled() {
+    val sharedViewModel = viewModel<ConnectFourViewModel>()
+    ProfileSelectorGridItem(
+        thisItemProfile = sharedViewModel.player1Profile,
+        isUnavailable = true)
 }
 
 @Composable
 fun GridIconButton(
-    color: Color = Color.LightGray,
+    enabledColor: Color = Color.LightGray,
     imageID: Int,
     onClick: () -> Unit = {},
-    text: String = "NO TEXT"
+    text: String = "NO TEXT",
+    enabled: Boolean = true,
 ) {
     Column(Modifier.padding(5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         FilledIconButton(
+            enabled = enabled,
             onClick = { onClick() },
             modifier = Modifier.size(80.dp),
-            colors = IconButtonDefaults.filledIconButtonColors(color)
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = enabledColor, disabledContainerColor = Color.DarkGray)
         ) {
             Image(
                 painter = painterResource(id = imageID),
@@ -126,7 +137,7 @@ fun PreviewProfileSelector() {
                 if (localVm.selectedProfile == profile) null
                 else profile
         },
-        onAddButtonClicked = {/*TODO*/},
+        onAddButtonClicked = {},
     )
 }
 
@@ -152,19 +163,21 @@ fun ProfileSelector(shVm: ConnectFourViewModel, localVm: EditProfilesViewModel,
                     shVm.player1Profile,
                     shVm.player2Profile)
                 ) { profile ->
-                    ProfileSelectorGridItem(localVm.selectedProfile, profile,
-                        onClick = {
-                            onProfileSelected(profile)
-                        }
+                    ProfileSelectorGridItem(
+                        thisItemProfile = profile,
+                        selectedProfile = localVm.selectedProfile,
+                        onClick = { onProfileSelected(profile) }
                     )
                 }
                 item(span = {GridItemSpan(maxLineSpan)}) {Text("User Profiles:")}
                 items(shVm.userProfiles) {profile ->
-                    ProfileSelectorGridItem(localVm.selectedProfile, profile,
+                    ProfileSelectorGridItem(
+                        thisItemProfile = profile,
+                        selectedProfile = localVm.selectedProfile,
                         onClick = { onProfileSelected(profile) })
                 }
                 item {
-                    GridIconButton(color = Color.Gray, imageID = R.drawable.add_symbol,
+                    GridIconButton(enabledColor = Color.Gray, imageID = R.drawable.add_symbol,
                         onClick = onAddButtonClicked)
                 }
             }

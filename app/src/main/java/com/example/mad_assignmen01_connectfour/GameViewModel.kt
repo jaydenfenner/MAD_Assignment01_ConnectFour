@@ -85,7 +85,9 @@ class GameViewModel() : ViewModel() {
     fun undoMove() {
         if (moveStack.isNotEmpty()) {
             board = moveStack.pop()
-            currentPlayer = if (currentPlayer == 1) 2 else 1
+            if (isSinglePlayer) {
+                currentPlayer = if (currentPlayer == 1) 2 else 1
+            }
             isGameOver = false
             gameMessage = ""
         }

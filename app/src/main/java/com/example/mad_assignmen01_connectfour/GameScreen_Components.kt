@@ -21,12 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import android.content.res.Configuration
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import java.util.Stack
 
 /**
  * set the game message and game over states
@@ -176,7 +173,7 @@ fun ProfileDisplay(gameVm: GameViewModel) {
     ) {
         ProfileSelectorGridItem(
             isSelected = (gameVm.currentPlayer == 1),
-            userProfile = gameVm.p1Profile,
+            thisItemProfile = gameVm.p1Profile,
             onClick = {}
         )
 
@@ -184,7 +181,7 @@ fun ProfileDisplay(gameVm: GameViewModel) {
 
         ProfileSelectorGridItem(
             isSelected = (gameVm.currentPlayer == 2),
-            userProfile = gameVm.p2Profile,
+            thisItemProfile = gameVm.p2Profile,
             onClick = {}
         )
     }
