@@ -32,17 +32,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import android.content.Context
 import android.content.res.Configuration
-import android.util.DisplayMetrics
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import java.util.Stack
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
 
@@ -345,14 +340,18 @@ fun handleCellClick(
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview(
+fun GameScreen(
     shVm: ConnectFourViewModel = ConnectFourViewModel(),
     isSinglePlayer: Boolean = false,
     gridWidth: Int = 7,
     gridHeight: Int = 6,
-    player1Name: String = "Player 1",
-    player2Name: String = "Player 2"
+    player1Name: String = if (isSinglePlayer) shVm.singlePlayerProfileSelection.name else shVm.twoPlayerProfileSelectionP1.name,
+    player2Name: String = if (isSinglePlayer) shVm.computerProfile.name else shVm.twoPlayerProfileSelectionP2.name
 ) {
+    val player1 = if (isSinglePlayer) shVm.singlePlayerProfileSelection
+                    else shVm.twoPlayerProfileSelectionP1
+    val player2 = if (isSinglePlayer) shVm.computerProfile
+                    else shVm.twoPlayerProfileSelectionP2
     MAD_Assignmen01_ConnectFourTheme {
         Column(
             modifier = Modifier
@@ -362,28 +361,11 @@ fun DefaultPreview(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ProfileDisplay(
-                leftProfile = shVm.player1Profile,
-                rightProfile = if (isSinglePlayer) shVm.computerProfile else shVm.player2Profile)
+                leftProfile = player1,
+                rightProfile = player2,
+            )
             Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer)
         }
-    }
-}
-
-@Composable
-fun ProfileImageClickable(
-    modifier: Modifier = Modifier,
-    userProfile: UserProfile,
-    onClick: () -> Unit = {}
-) {
-    FilledIconButton(
-        onClick = {onClick()},
-        modifier = modifier,
-        colors = IconButtonDefaults.filledIconButtonColors(Color.Yellow)
-    ) {
-        Image(
-            painter = painterResource(id = userProfile.avatarID),
-            contentDescription = "",
-            modifier = Modifier.fillMaxSize())
     }
 }
 
@@ -396,22 +378,18 @@ fun ProfileDisplay(leftProfile: UserProfile, rightProfile: UserProfile) {
             .padding(10.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            ProfileImageClickable(Modifier.size(75.dp), leftProfile) { /* TODO */ }
-            Text(text = leftProfile.name)
-        }
+        ProfileSelectorGridItem(
+            isSelected = true, // TODO need to update on game state
+            userProfile = leftProfile,
+            onClick = {}
+        )
 
         Spacer(modifier = Modifier.width(100.dp))
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            ProfileImageClickable(Modifier.size(75.dp), rightProfile) { /* TODO */ }
-            Text(text = rightProfile.name)
-        }
+        ProfileSelectorGridItem(
+            isSelected = true, // TODO need to update on game state
+            userProfile = rightProfile,
+            onClick = {}
+        )
     }
 }
