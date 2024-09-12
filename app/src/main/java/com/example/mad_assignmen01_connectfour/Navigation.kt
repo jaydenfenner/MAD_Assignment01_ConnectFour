@@ -13,10 +13,10 @@ data object Routes{
     const val START_GAME_MENU_2P = "gameStart/2Player"
     const val GAME_1P_STANDARD_7_6 = "connect4/1player/standard"
     const val GAME_1P_SMALL_6_5 = "connect4/1player/small"
-    const val GAME_1P_LARGE_8_7 = "connect4/1player/standard"
+    const val GAME_1P_LARGE_8_7 = "connect4/1player/Large"
     const val GAME_2P_STANDARD_7_6 = "connect4/2player/standard"
     const val GAME_2P_SMALL_6_5 = "connect4/2player/small"
-    const val GAME_2P_LARGE_8_7 = "connect4/2player/standard"
+    const val GAME_2P_LARGE_8_7 = "connect4/2player/Large"
 }
 
 @Composable
@@ -32,29 +32,29 @@ fun AppNavigation() {
 
         // Single Player
         composable(Routes.GAME_1P_STANDARD_7_6) {
-            GameScreen(navController, sharedViewModel,
+            GameScreen(navController,sharedViewModel,
                 isSinglePlayer = true, gridWidth = 7, gridHeight = 6)
         }
         composable(Routes.GAME_1P_SMALL_6_5) {
-            GameScreen(navController, sharedViewModel,
+            GameScreen(navController,sharedViewModel,
                 isSinglePlayer = true, gridWidth = 6, gridHeight = 5)
         }
         composable(Routes.GAME_1P_LARGE_8_7) {
-            GameScreen(navController, sharedViewModel,
+            GameScreen(navController,sharedViewModel,
                 isSinglePlayer = true, gridWidth = 8, gridHeight = 7)
         }
 
         // Two Player
         composable(Routes.GAME_2P_STANDARD_7_6) {
-            GameScreen(navController, sharedViewModel,
+            GameScreen(navController,sharedViewModel,
                 isSinglePlayer = false, gridWidth = 7, gridHeight = 6)
         }
         composable(Routes.GAME_2P_SMALL_6_5) {
-            GameScreen(navController, sharedViewModel,
+            GameScreen(navController,sharedViewModel,
                 isSinglePlayer = false, gridWidth = 6, gridHeight = 5)
         }
         composable(Routes.GAME_2P_LARGE_8_7) {
-            GameScreen(navController, sharedViewModel,
+            GameScreen(navController,sharedViewModel,
                 isSinglePlayer = false, gridWidth = 8, gridHeight = 7)
         }
     }

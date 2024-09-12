@@ -20,16 +20,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 /**
  * set the game message and game over states
  */
 @Composable
 fun GameControls(
+    navController: NavHostController,
     gameVm: GameViewModel,
 ) {
     Button(
@@ -40,10 +43,33 @@ fun GameControls(
     }
 
     Button(
-        onClick = {gameVm.resetBoard()},
-        modifier = Modifier.padding(top = 16.dp)
+            onClick = {gameVm.resetBoard()},
+            modifier = Modifier.padding(top = 16.dp)
     ) {
-        Text(text = "Reset Game")
+        Text(text = "Reset Board")
+    }
+
+    Row(
+        modifier = Modifier.padding(top = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp) // Adds space between buttons
+    ) {
+        Button(
+            onClick = { navController.navigate(Routes.MAIN_MENU) }
+        ) {
+            Text(text = "Main Menu")
+        }
+
+        Button(
+            onClick = { if(gameVm.isSinglePlayer) {
+                navController.navigate(Routes.START_GAME_MENU_1P)
+            }
+            else{
+                navController.navigate(Routes.START_GAME_MENU_2P)
+            }
+            }
+        ) {
+            Text(text = "Board Settings")
+        }
     }
 }
 
@@ -52,6 +78,7 @@ fun GameControls(
 fun Preview_Connect4Board() {
     val shVm = viewModel<ConnectFourViewModel>()
     val gameVm = viewModel<GameViewModel>()
+    val navController = rememberNavController()
     gameVm.initialise(
         boardWidth = 7,
         boardHeight = 6,
@@ -59,11 +86,14 @@ fun Preview_Connect4Board() {
         p1_profile = shVm.player1Profile,
         p2_profile = shVm.computerProfile,
     )
-    Connect4Board(gameVm)
+    Connect4Board(gameVm, navController = navController)
 }
 
 @Composable
-fun Connect4Board(gameVm: GameViewModel) {
+fun Connect4Board(
+    gameVm: GameViewModel,
+    navController: NavHostController
+) {
     val currentPlayerProfile = when (gameVm.currentPlayer) {
         1 -> gameVm.p1Profile
         else -> gameVm.p2Profile
@@ -110,7 +140,7 @@ fun Connect4Board(gameVm: GameViewModel) {
             )
         }
 
-        GameControls(gameVm = gameVm)
+        GameControls(gameVm = gameVm, navController = navController)
     }
 }
 

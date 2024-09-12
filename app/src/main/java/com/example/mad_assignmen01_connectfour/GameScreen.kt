@@ -1,13 +1,20 @@
 package com.example.mad_assignmen01_connectfour
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,19 +60,16 @@ fun GameScreen_Portrait(
     shVm: ConnectFourViewModel,
     gameVm: GameViewModel,
 ) {
-    val player1 = if (gameVm.isSinglePlayer) shVm.singlePlayerProfileSelection
-                    else shVm.twoPlayerProfileSelectionP1
-    val player2 = if (gameVm.isSinglePlayer) shVm.computerProfile
-                    else shVm.twoPlayerProfileSelectionP2
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .background(color = Color.LightGray)
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileDisplay(gameVm = gameVm)
-        Connect4Board(gameVm = gameVm)
+        Connect4Board(gameVm = gameVm, navController = navController)
     }
 }
 

@@ -20,16 +20,20 @@ class GameViewModel() : ViewModel() {
     var isSinglePlayer = false
     var p1Profile = UserProfile(pName = "", pAvatarID = 0)
     var p2Profile = UserProfile(pName = "", pAvatarID = 0)
+    var hasBeenInitialised by mutableStateOf(false)
 
     fun initialise(boardWidth: Int, boardHeight: Int,
                    is1P: Boolean, p1_profile: UserProfile, p2_profile: UserProfile,
     ) {
-        width = boardWidth
-        height = boardHeight
-        board = Board(rows = height, columns = width)
-        isSinglePlayer = is1P
-        p1Profile = p1_profile
-        p2Profile = p2_profile
+        if (!hasBeenInitialised) {
+            width = boardWidth
+            height = boardHeight
+            board = Board(rows = height, columns = width)
+            isSinglePlayer = is1P
+            p1Profile = p1_profile
+            p2Profile = p2_profile
+            hasBeenInitialised = true
+        }
     }
 
     var board by mutableStateOf(Board(rows = height, columns = width)) // individual board state

@@ -62,6 +62,7 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
     }
 }
 
+
 @Composable
 fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourViewModel) {
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
