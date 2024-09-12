@@ -62,15 +62,15 @@ fun StartGameScreenButtons(
 
 @Composable
 fun GamePlayerSelector(shVm: ConnectFourViewModel,
+                       prompt: String,
                        selectedProfile: UserProfile,
                        defaultProfile: UserProfile,
                        onProfileSelected: (profile: UserProfile) -> Unit,
-                       modifier: Modifier = Modifier,
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .heightIn(max = 400.dp)) {
-        Text("Please select a profile to use", fontSize = 20.sp)
+        Text(prompt, fontSize = 20.sp)
         Column(
             Modifier
                 .wrapContentSize()
@@ -115,6 +115,7 @@ fun Preview_GamePlayerSelector() {
     var selectedProfile by remember { mutableStateOf(shVm.player1Profile)}
     GamePlayerSelector(shVm = shVm, 
         selectedProfile = selectedProfile, defaultProfile = shVm.player1Profile,
-        onProfileSelected = {selectedProfile = it}
+        onProfileSelected = {selectedProfile = it},
+        prompt = "Please select a profile to use"
     )
 }
