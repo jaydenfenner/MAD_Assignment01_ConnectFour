@@ -48,48 +48,19 @@ fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
         Text(text = "Single Player Game")
         GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
             defaultProfile = shVm.player1Profile,
-            onProfileSelected = {
-                shVm.twoPlayerProfileSelectionP1 = it
-            },
+            onProfileSelected = { shVm.twoPlayerProfileSelectionP1 = it },
+            prompt = "Select Player 1 Profile",
         )
         GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
             defaultProfile = shVm.player2Profile,
-            onProfileSelected = {
-                shVm.twoPlayerProfileSelectionP2 = it
-            },
+            onProfileSelected = { shVm.twoPlayerProfileSelectionP2 = it },
+            prompt = "Select Player 2 Profile",
         )
         StartGameScreenButtons(
             onStartStandard = { navController.navigate("connect4/2player/7/6/") },
             onStartSmall = { navController.navigate("connect4/2player/6/5/}") },
             onStartLarge = { navController.navigate("connect4/2player/8/7/") },
         )
-    }
-}
-
-@Composable
-fun old_Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourViewModel) {
-    var player1Name by remember { mutableStateOf("Player 1") }
-    var player2Name by remember { mutableStateOf("Player 2") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Two Player Game")
-
-        TextField(
-            value = player1Name,
-            onValueChange = { player1Name = it },
-            label = { Text("Enter Player 1 Name") }
-        )
-        TextField(
-            value = player2Name,
-            onValueChange = { player2Name = it },
-            label = { Text("Enter Player 2 Name") }
-        )
-
     }
 }
 

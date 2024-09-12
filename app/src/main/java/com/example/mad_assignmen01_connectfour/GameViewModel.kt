@@ -12,12 +12,14 @@ import java.util.Stack
  * NOTE: board dims must be set with setBoardSize(boardWidth: Int, boardHeight: Int)
  */
 class GameViewModel() : ViewModel() {
-    private var width = 1
-    private var height = 1
+    var width = 1
+        private set
+    var height = 1
+        private set
     fun setBoardSize(boardWidth: Int, boardHeight: Int) {
         width = boardWidth
         height = boardHeight
-        board = Board(width, height)
+        board = Board(rows = height, columns = width)
     }
 
     var board by mutableStateOf(Board(width, height)) // individual board state

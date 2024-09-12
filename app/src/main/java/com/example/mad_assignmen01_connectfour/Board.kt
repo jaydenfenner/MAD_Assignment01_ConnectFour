@@ -1,5 +1,9 @@
 package com.example.mad_assignmen01_connectfour
 
+
+/**
+ * boardState is a list of mutable lists, indexed as []y,x]
+ */
 data class Board(
     val rows: Int,
     val columns: Int,
