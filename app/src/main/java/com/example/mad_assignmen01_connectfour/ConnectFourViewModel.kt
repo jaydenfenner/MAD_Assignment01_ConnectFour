@@ -14,8 +14,11 @@ class ConnectFourViewModel: ViewModel() {
     val computerProfile = UserProfile("AI", AvatarIDs.COMPUTER)
     var player1Profile by mutableStateOf(UserProfile("Player 1", AvatarIDs.BLANK_AVATAR))
     var player2Profile by mutableStateOf(UserProfile("Player 2", AvatarIDs.BLANK_AVATAR))
-
     var userProfiles = mutableStateListOf<UserProfile>()
+
+    var singlePlayerProfileSelection by mutableStateOf(player1Profile)
+    var twoPlayerProfileSelectionP1 by mutableStateOf(player1Profile)
+    var twoPlayerProfileSelectionP2 by mutableStateOf(player2Profile)
 }
 
 // CLASS DEFINITIONS BELOW

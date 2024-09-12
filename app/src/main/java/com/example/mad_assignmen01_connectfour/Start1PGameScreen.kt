@@ -3,6 +3,7 @@ package com.example.mad_assignmen01_connectfour
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -25,19 +26,18 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun Start1PGameScreen(navController: NavHostController, shVm: ConnectFourViewModel) {
     val orientation = LocalConfiguration.current.orientation
-    when (orientation) {
-        Configuration.ORIENTATION_PORTRAIT ->
-            Start1PGame_Portrait(navController = navController, shVm = shVm)
-        else ->
-//            Start1PGame_Landscape()
-            Start1PGame_Portrait(navController = navController, shVm = shVm)
+    InsetContent {
+        when (orientation) {
+            Configuration.ORIENTATION_PORTRAIT ->
+                Start1PGame_Portrait(navController = navController, shVm = shVm)
+            else ->
+                Start1PGame_Landscape(navController = navController, shVm = shVm)
+        }
     }
 }
 
 @Composable
 fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourViewModel) {
-    var player1Name by remember { mutableStateOf("Player 1") }
-    var player2Name by remember { mutableStateOf("Player 2") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,45 +46,39 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Single Player Game")
-
-        TextField(
-            value = player1Name,
-            onValueChange = { player1Name = it },
-            label = { Text("Enter Player 1 Name") }
+        GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
+            defaultProfile = shVm.player1Profile,
+            onProfileSelected = {
+                shVm.singlePlayerProfileSelection = it
+            },
         )
-        Button(
-            onClick = {
-                navController.navigate("connect4/1player/7/6/${player1Name}")
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Standard Game (7x6)")
-        }
-
-        Button(
-            onClick = {
-                navController.navigate("connect4/1player/6/5/${player1Name}")
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Small Game (6x5)")
-        }
-
-        Button(
-            onClick = {
-                navController.navigate("connect4/1player/8/7/${player1Name}")
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Large Game (8x7)")
-        }
+        StartGameScreenButtons(
+            onStartStandard = { navController.navigate("connect4/1player/7/6/") },
+            onStartSmall = { navController.navigate("connect4/1player/6/5/}") },
+            onStartLarge = { navController.navigate("connect4/1player/8/7/") },
+        )
     }
 }
 
 @Composable
-fun Start1PGame_Landscape() {
-    Column(Modifier.fillMaxSize()) {
-        Text("Landscape")
+fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourViewModel) {
+    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+        Text(text = "Single Player Game")
+        Row {
+            Column(Modifier.weight(1f)) {
+                GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
+                    defaultProfile = shVm.player1Profile,
+                    onProfileSelected = {
+                        shVm.singlePlayerProfileSelection = it
+                    },
+                )
+            }
+            StartGameScreenButtons(modifier = Modifier.weight(1f),
+                onStartStandard = { navController.navigate("connect4/1player/7/6/") },
+                onStartSmall = { navController.navigate("connect4/1player/6/5/}") },
+                onStartLarge = { navController.navigate("connect4/1player/8/7/") },
+            )
+        }
     }
 }
 
@@ -104,12 +98,12 @@ fun Start1PGame_Preview() {
 fun Start1PGame_Preview5Inch() {
     Start1PGame_Preview()
 }
-//@Preview(name = "5-inch Device Landscape",
-//    widthDp = previewHeightDp, heightDp = previewWidthDp, showBackground = true)
-//@Composable
-//fun Start1PGame_Preview5InchLand() {
-//    Start1PGame_Preview()
-//}
+@Preview(name = "5-inch Device Landscape",
+    widthDp = previewHeightDp, heightDp = previewWidthDp, showBackground = true)
+@Composable
+fun Start1PGame_Preview5InchLand() {
+    Start1PGame_Preview()
+}
 
 // TODO check if we need these, my friend got 100% with no tablet layouts
 //@Preview(name = "10-inch Tablet Portrait",

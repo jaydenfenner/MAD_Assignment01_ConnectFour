@@ -37,7 +37,7 @@ fun EditProfilesScreen(shVm: ConnectFourViewModel) {
     val localVm = viewModel<EditProfilesViewModel>()
     val orientation = LocalConfiguration.current.orientation
 
-    //TODO remove
+//    TODO remove
 //    shVm.userProfiles.add(UserProfile("test", AvatarIDs.POO_EMOJI))
 //    localVm.selectedProfile = shVm.userProfiles[0]
 
