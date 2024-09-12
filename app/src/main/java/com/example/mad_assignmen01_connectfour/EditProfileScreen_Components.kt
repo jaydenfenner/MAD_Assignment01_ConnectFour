@@ -68,7 +68,7 @@ fun ProfileSelectorGridItem(
     selectedProfile: UserProfile? = null,
     userProfile: UserProfile,
     onClick: () -> Unit = {},
-    isSelected: Boolean = (selectedProfile == userProfile)
+    isSelected: Boolean = (selectedProfile == userProfile),
 ) {
     GridIconButton(
         onClick = onClick,
