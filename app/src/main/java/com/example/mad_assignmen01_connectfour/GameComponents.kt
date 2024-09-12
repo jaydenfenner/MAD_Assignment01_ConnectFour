@@ -33,109 +33,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import android.content.res.Configuration
+import android.util.Log
+import android.webkit.WebSettings.TextSize
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import java.util.Stack
 import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectFourTheme
 
 
 @Composable
-fun MainMenu(navController: NavHostController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(text = "Main Menu")
-        Button(
-            onClick = { navController.navigate("start/2player") },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start 2 Player Game")
-        }
-        Button(
-            onClick = { navController.navigate("start/1player") },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start 1 Player Game")
-        }
-    }
-}
-
-@Composable
-fun GameStartMenu(navController: NavHostController, isSinglePlayer: Boolean) {
-    var player1Name by remember { mutableStateOf("Player 1") }
-    var player2Name by remember { mutableStateOf("Player 2") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = if (isSinglePlayer) "Single Player Game" else "Two Player Game")
-
-        TextField(
-            value = player1Name,
-            onValueChange = { player1Name = it },
-            label = { Text("Enter Player 1 Name") }
-        )
-
-        if (!isSinglePlayer) {
-            TextField(
-                value = player2Name,
-                onValueChange = { player2Name = it },
-                label = { Text("Enter Player 2 Name") }
-            )
-        }
-        Button(
-            onClick = {
-                if (isSinglePlayer) {
-                    navController.navigate("connect4/1player/7/6/${player1Name}")
-                } else {
-                    navController.navigate("connect4/2player/7/6/${player1Name}/${player2Name}")
-                }
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Standard Game (7x6)")
-        }
-
-        Button(
-            onClick = {
-                if (isSinglePlayer) {
-                    navController.navigate("connect4/1player/6/5/${player1Name}")
-                } else {
-                    navController.navigate("connect4/2player/6/5/${player1Name}/${player2Name}")
-                }
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Small Game (6x5)")
-        }
-
-        Button(
-            onClick = {
-                if (isSinglePlayer) {
-                    navController.navigate("connect4/1player/8/7/${player1Name}")
-                } else {
-                    navController.navigate("connect4/2player/8/7/${player1Name}/${player2Name}")
-                }
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Large Game (8x7)")
-        }
-    }
-}
-
-
-
-@Composable
 fun GameControls(
+    navController: NavHostController,
+    isSinglePlayer: Boolean,
     moveStack: Stack<Board>,
     onUndo: (Board, Int, String) -> Unit,
     onReset: (Int, Int) -> Unit,
@@ -167,6 +80,30 @@ fun GameControls(
     ) {
         Text(text = "Reset Game")
     }
+    Row(
+        modifier = Modifier.padding(top = 16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Button(
+            onClick = {
+                navController.navigate(Routes.MAIN_MENU)
+            }
+        ) {
+            Text(text = "Return to main menu")
+        }
+
+        Button(
+            onClick = {
+                if (isSinglePlayer) {
+                    navController.navigate(Routes.GAME_START_MENU_1P)
+                } else {
+                    navController.navigate(Routes.GAME_START_MENU_2P)
+                }
+            }
+        ) {
+            Text(text = "Change Game settings")
+        }
+    }
 }
 
 
@@ -174,10 +111,11 @@ fun GameControls(
 
 @Composable
 fun Connect4Board(
-    rows: Int = 6,
-    columns: Int = 7,
+    rows: Int = 7,
+    columns: Int = 8,
     isSinglePlayer: Boolean,
-    gameViewModel: GameViewModel
+    gameViewModel: GameViewModel,
+    navController: NavHostController
 ) {
     val board = gameViewModel.board.value
     val currentPlayer = gameViewModel.currentPlayer
@@ -188,6 +126,7 @@ fun Connect4Board(
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    Log.d("Connect4Board", "Board state rows: ${board.boardState.size}, columns: ${board.boardState[0].size}")
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -258,6 +197,8 @@ fun Connect4Board(
 
         if (!isLandscape) {
             GameControls(
+                navController =navController,
+                isSinglePlayer = isSinglePlayer,
                 moveStack = moveStack,
                 onUndo = { previousBoard, newCurrentPlayer, message ->
                     gameViewModel.undoMove()
@@ -332,12 +273,25 @@ fun handleCellClick(
     }
 }
 
-
-
-
+/***********************************************************************************/
+// Purely in place for preview reasons, cant preview unless you have default vals
+/**********************************************************************************/
 @Preview(showBackground = true)
 @Composable
+fun GameScreenPreview() {
+    val navController = rememberNavController()
+
+    GameScreen(
+        navController = navController,
+        isSinglePlayer = true,
+        gridWidth = 7,
+        gridHeight = 6
+    )
+}
+/***********************************************************/
+@Composable
 fun GameScreen(
+    navController: NavHostController,
     shVm: ConnectFourViewModel = ConnectFourViewModel(),
     isSinglePlayer: Boolean = false,
     gridWidth: Int = 7,
@@ -362,7 +316,7 @@ fun GameScreen(
                 leftProfile = player1,
                 rightProfile = player2,
             )
-            Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer, gameViewModel)
+            Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer, gameViewModel, navController)
         }
     }
 }

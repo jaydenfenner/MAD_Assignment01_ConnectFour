@@ -26,14 +26,14 @@ fun AppNavigation() {
         composable(Routes.GAME_START_MENU_1P) { Start1PGameScreen(navController, sharedViewModel) }
         composable(Routes.GAME_START_MENU_2P) { Start2PGameScreen(navController, sharedViewModel) }
         composable(Routes.GAME_1P + "/{gridWidth}/{gridHeight}/{player1Name}") { backStackEntry ->
-            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
-            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
-            GameScreen(isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight)
+            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 8
+            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 7
+            GameScreen(navController, isSinglePlayer = true, gridWidth = gridWidth, gridHeight = gridHeight)
         }
         composable(Routes.GAME_2P + "/{gridWidth}/{gridHeight}/{player1Name}/{player2Name}") { backStackEntry ->
-            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 7
-            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 6
-            GameScreen(isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight)
+            val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 8
+            val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 7
+            GameScreen(navController, isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight)
         }
     }
 }

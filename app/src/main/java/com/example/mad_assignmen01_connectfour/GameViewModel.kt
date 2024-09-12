@@ -1,8 +1,6 @@
 package com.example.mad_assignmen01_connectfour
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import java.util.Stack
 
@@ -12,7 +10,6 @@ class GameViewModel : ViewModel() {
     val gameMessage = mutableStateOf("")
     val gameOver = mutableStateOf(false)
     val moveStack = Stack<Board>()
-
 
     fun resetBoard(rows: Int, columns: Int) {
         board.value = Board(rows, columns)
