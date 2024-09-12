@@ -54,7 +54,7 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
         )
         StartGameScreenButtons(
             onStartStandard = { navController.navigate("connect4/1player/7/6/") },
-            onStartSmall = { navController.navigate("connect4/1player/6/5/}") },
+            onStartSmall = { navController.navigate("connect4/1player/6/5/") },
             onStartLarge = { navController.navigate("connect4/1player/8/7/") },
         )
     }
@@ -75,7 +75,7 @@ fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourVie
             }
             StartGameScreenButtons(modifier = Modifier.weight(1f),
                 onStartStandard = { navController.navigate("connect4/1player/7/6/") },
-                onStartSmall = { navController.navigate("connect4/1player/6/5/}") },
+                onStartSmall = { navController.navigate("connect4/1player/6/5/") },
                 onStartLarge = { navController.navigate("connect4/1player/8/7/") },
             )
         }

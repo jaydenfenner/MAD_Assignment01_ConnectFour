@@ -29,6 +29,20 @@ class UserProfile(pName: String, pAvatarID: Int) {
     var numberOfLosses by mutableIntStateOf(0)
     var numberOfDraws by mutableIntStateOf(0)
 
+    val totalGames = numberOfWins+numberOfLosses+numberOfDraws
+
+    fun recordWin() {
+        numberOfWins++
+    }
+
+    fun recordLoss() {
+        numberOfLosses++
+    }
+
+    fun recordDraw() {
+        numberOfDraws++
+    }
+
     init {
         name = pName
         avatarID = pAvatarID

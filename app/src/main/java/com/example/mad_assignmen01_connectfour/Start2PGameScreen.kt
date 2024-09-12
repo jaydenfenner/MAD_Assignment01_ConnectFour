@@ -29,7 +29,6 @@ fun Start2PGameScreen(navController: NavHostController, shVm: ConnectFourViewMod
         Configuration.ORIENTATION_PORTRAIT ->
             Start2PGame_Portrait(navController = navController, shVm = shVm)
         else ->
-//            Start2PGame_Landscape()
             Start2PGame_Portrait(navController = navController, shVm = shVm)
     }
 }

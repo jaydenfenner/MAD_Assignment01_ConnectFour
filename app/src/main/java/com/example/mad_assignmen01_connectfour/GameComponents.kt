@@ -177,7 +177,7 @@ fun Connect4Board(
     rows: Int = 6,
     columns: Int = 7,
     isSinglePlayer: Boolean,
-    gameViewModel: GameViewModel = viewModel()
+    gameViewModel: GameViewModel
 ) {
     val board = gameViewModel.board.value
     val currentPlayer = gameViewModel.currentPlayer
@@ -276,9 +276,6 @@ fun Connect4Board(
 }
 
 
-
-
-
 @Composable
 fun Connect4Cell(state: Int, onClick: () -> Unit) {
     val context = LocalContext.current
@@ -352,6 +349,7 @@ fun GameScreen(
                     else shVm.twoPlayerProfileSelectionP1
     val player2 = if (isSinglePlayer) shVm.computerProfile
                     else shVm.twoPlayerProfileSelectionP2
+    val gameViewModel: GameViewModel = viewModel()
     MAD_Assignmen01_ConnectFourTheme {
         Column(
             modifier = Modifier
@@ -364,7 +362,7 @@ fun GameScreen(
                 leftProfile = player1,
                 rightProfile = player2,
             )
-            Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer)
+            Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer, gameViewModel)
         }
     }
 }
