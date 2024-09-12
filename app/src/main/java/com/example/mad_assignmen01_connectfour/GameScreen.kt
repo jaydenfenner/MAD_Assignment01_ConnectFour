@@ -63,7 +63,7 @@ fun GameScreen_Portrait(
             rightProfile = player2,
             gameVm = gameVm,
         )
-        Connect4Board(gameVm = gameVm)
+        Connect4Board(gameVm = gameVm, navController = navController)
     }
 }
 

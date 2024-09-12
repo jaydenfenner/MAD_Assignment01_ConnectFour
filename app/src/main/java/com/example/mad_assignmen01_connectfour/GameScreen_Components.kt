@@ -26,6 +26,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import java.util.Stack
 
 /**
@@ -34,19 +36,44 @@ import java.util.Stack
 @Composable
 fun GameControls(
     gameVm: GameViewModel,
+    navController: NavHostController,
+    is1P: Boolean
 ) {
+
     Button(
         onClick = {gameVm.undoMove()},
         modifier = Modifier.padding(top = 16.dp)
     ) {
         Text(text = "Undo Move")
     }
-
     Button(
-        onClick = {gameVm.resetBoard()},
-        modifier = Modifier.padding(top = 16.dp)
+            onClick = {gameVm.resetBoard()},
+            modifier = Modifier.padding(top = 16.dp)
     ) {
-        Text(text = "Reset Game")
+        Text(text = "Reset Board")
+    }
+
+    Row(
+        modifier = Modifier.padding(top = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp) // Adds space between buttons
+    ) {
+        Button(
+            onClick = { navController.navigate(Routes.MAIN_MENU) }
+        ) {
+            Text(text = "Main Menu")
+        }
+
+        Button(
+            onClick = { if(is1P) {
+                navController.navigate(Routes.START_GAME_MENU_1P)
+            }
+            else{
+                navController.navigate(Routes.START_GAME_MENU_2P)
+            }
+            }
+        ) {
+            Text(text = "Board Settings")
+        }
     }
 }
 
@@ -54,17 +81,19 @@ fun GameControls(
 @Composable
 fun Preview_Connect4Board() {
     val gameVm = viewModel<GameViewModel>()
+    val navController = rememberNavController()
     gameVm.initialise(
         boardWidth = 7,
         boardHeight = 6,
         is1P = true
     )
-    Connect4Board(gameVm)
+    Connect4Board(gameVm, navController = navController)
 }
 
 @Composable
 fun Connect4Board(
     gameVm: GameViewModel,
+    navController: NavHostController
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,7 +137,7 @@ fun Connect4Board(
             )
         }
 
-        GameControls(gameVm = gameVm)
+        GameControls(gameVm = gameVm, is1P = gameVm.isSinglePlayer, navController = navController)
     }
 }
 

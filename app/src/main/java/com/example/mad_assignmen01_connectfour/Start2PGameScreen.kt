@@ -57,9 +57,9 @@ fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
             prompt = "Select Player 2 Profile",
         )
         StartGameScreenButtons(
-            onStartStandard = { navController.navigate("connect4/2player/7/6/") },
-            onStartSmall = { navController.navigate("connect4/2player/6/5/}") },
-            onStartLarge = { navController.navigate("connect4/2player/8/7/") },
+            onStartStandard = { navController.navigate(Routes.GAME_2P_STANDARD_7_6) },
+            onStartSmall = { navController.navigate(Routes.GAME_2P_SMALL_6_5) },
+            onStartLarge = { navController.navigate(Routes.GAME_2P_LARGE_8_7) },
         )
     }
 }
