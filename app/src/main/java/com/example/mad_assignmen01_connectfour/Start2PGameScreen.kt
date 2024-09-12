@@ -87,6 +87,8 @@ fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
     }
 }
 
+
+
 @Composable
 fun Start2PGame_Landscape() {
     Column(Modifier.fillMaxSize()) {
