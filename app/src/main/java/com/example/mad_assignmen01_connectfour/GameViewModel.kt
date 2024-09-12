@@ -1,45 +1,65 @@
 package com.example.mad_assignmen01_connectfour
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import java.util.Stack
 
-class GameViewModel : ViewModel() {
-    var board = mutableStateOf(Board(6, 7))
-    val currentPlayer = mutableStateOf(1)
-    val gameMessage = mutableStateOf("")
-    val gameOver = mutableStateOf(false)
-    val moveStack = Stack<Board>()
+/**
+ * Game View Model Class
+ * NOTE: board dims must be set with setBoardSize(boardWidth: Int, boardHeight: Int)
+ */
+class GameViewModel() : ViewModel() {
+    private var width = 1
+    private var height = 1
+    fun setBoardSize(boardWidth: Int, boardHeight: Int) {
+        width = boardWidth
+        height = boardHeight
+        board = Board(width, height)
+    }
 
-    fun resetBoard(rows: Int, columns: Int) {
-        board.value = Board(rows, columns)
-        currentPlayer.value = 1
-        gameMessage.value = ""
-        gameOver.value = false
+    var board by mutableStateOf(Board(width, height)) // individual board state
+    val moveStack = Stack<Board>() // stack of previous board states
+
+    var currentPlayer by mutableIntStateOf(1)
+    var gameMessage by mutableStateOf("")
+    var isGameOver by mutableStateOf(false)
+
+    /** Set board to initial blank state, clear move stack */
+    fun resetBoard() {
+        board = Board(width, height)
+        currentPlayer = 1
+        gameMessage = ""
+        isGameOver = false
         moveStack.clear()
     }
 
+    /** pop one move off of move stack and update board */
     fun undoMove() {
         if (moveStack.isNotEmpty()) {
-            board.value = moveStack.pop()
-            currentPlayer.value = if (currentPlayer.value == 1) 2 else 1
-            gameOver.value = false
-            gameMessage.value = ""
+            board = moveStack.pop()
+            currentPlayer = if (currentPlayer == 1) 2 else 1
+            isGameOver = false
+            gameMessage = ""
         }
     }
 
-    fun saveMove() {
-        moveStack.push(board.value.copy())
+    /** push current board state */
+    fun saveStateToUndoStack() {
+        moveStack.push(board.copy())
     }
 
-    fun handleWin() {
-        val winner = board.value.checkWin()
+    /** update game message */
+    fun checkForAndHandleWin() {
+        val winner = board.checkWin()
         if (winner != 0) {
-            gameMessage.value = "Player $winner Wins!"
-            gameOver.value = true
-        } else if (board.value.isDraw()) {
-            gameMessage.value = "It's a Draw!"
-            gameOver.value = true
+            gameMessage = "Player $winner Wins!"
+            isGameOver = true
+        } else if (board.isDraw()) {
+            gameMessage = "It's a Draw!"
+            isGameOver = true
         }
     }
 }
