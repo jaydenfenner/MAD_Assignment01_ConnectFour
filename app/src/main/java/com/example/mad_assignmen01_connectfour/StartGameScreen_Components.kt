@@ -96,13 +96,8 @@ fun GamePlayerSelector(shVm: ConnectFourViewModel,
 @Preview(showBackground = true)
 @Composable
 fun Preview_GamePlayerSelector() {
-//    val navController = rememberNavController()
     val shVm = viewModel<ConnectFourViewModel>()
-//    val localVm = viewModel<EditProfilesViewModel>()
-//    shVm.userProfiles.add(UserProfile(
-//        pName = "some stupidly long user name which is way too long to fit",
-//        pAvatarID = AvatarIDs.POO_EMOJI
-//    ))
+
     var selectedProfile by remember { mutableStateOf(shVm.player1Profile)}
     GamePlayerSelector(shVm = shVm, 
         selectedProfile = selectedProfile, defaultProfile = shVm.player1Profile,
