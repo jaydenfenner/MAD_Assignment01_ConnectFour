@@ -37,24 +37,13 @@ fun StartGameScreenButtons(
     onStartLarge: () -> Unit = {},
 ) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(
-            onClick = onStartStandard,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
+        Button(onClick = onStartStandard, modifier = Modifier.padding(top = 16.dp)) {
             Text(text = "Start Standard Game (7x6)")
         }
-
-        Button(
-            onClick = onStartSmall,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
+        Button(onClick = onStartSmall, modifier = Modifier.padding(top = 16.dp)) {
             Text(text = "Start Small Game (6x5)")
         }
-
-        Button(
-            onClick = onStartLarge,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
+        Button(onClick = onStartLarge, modifier = Modifier.padding(top = 16.dp)) {
             Text(text = "Start Large Game (8x7)")
         }
     }
