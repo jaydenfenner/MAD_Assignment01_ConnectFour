@@ -1,7 +1,6 @@
 package com.example.mad_assignmen01_connectfour
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -21,12 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 
 @Preview(showBackground = true)
 @Composable
@@ -51,15 +48,15 @@ fun StartGameScreenButtons(
 
 @Composable
 fun GamePlayerSelector(shVm: ConnectFourViewModel,
+                       prompt: String,
                        selectedProfile: UserProfile,
                        defaultProfile: UserProfile,
                        onProfileSelected: (profile: UserProfile) -> Unit,
-                       modifier: Modifier = Modifier,
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .heightIn(max = 400.dp)) {
-        Text("Please select a profile to use", fontSize = 20.sp)
+        Text(prompt, fontSize = 20.sp)
         Column(
             Modifier
                 .wrapContentSize()
@@ -104,6 +101,7 @@ fun Preview_GamePlayerSelector() {
     var selectedProfile by remember { mutableStateOf(shVm.player1Profile)}
     GamePlayerSelector(shVm = shVm, 
         selectedProfile = selectedProfile, defaultProfile = shVm.player1Profile,
-        onProfileSelected = {selectedProfile = it}
+        onProfileSelected = {selectedProfile = it},
+        prompt = "Please select a profile to use"
     )
 }

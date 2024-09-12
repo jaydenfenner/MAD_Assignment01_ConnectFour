@@ -48,6 +48,7 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
     ) {
         Text(text = "Single Player Game")
         GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
+            prompt = "Please select a profile to use",
             defaultProfile = shVm.player1Profile,
             onProfileSelected = {
                 shVm.singlePlayerProfileSelection = it
@@ -61,14 +62,6 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun Test() {
-    val sharedViewModel = viewModel<ConnectFourViewModel>()
-    GameScreen(sharedViewModel,
-        isSinglePlayer = true, gridWidth = 7, gridHeight = 6)
-}
-
 @Composable
 fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourViewModel) {
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
@@ -76,6 +69,7 @@ fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourVie
         Row {
             Column(Modifier.weight(1f)) {
                 GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
+                    prompt = "Please select a profile to use",
                     defaultProfile = shVm.player1Profile,
                     onProfileSelected = {
                         shVm.singlePlayerProfileSelection = it

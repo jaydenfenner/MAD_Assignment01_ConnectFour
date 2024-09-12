@@ -25,19 +25,19 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun Start2PGameScreen(navController: NavHostController, shVm: ConnectFourViewModel) {
     val orientation = LocalConfiguration.current.orientation
-    when (orientation) {
-        Configuration.ORIENTATION_PORTRAIT ->
-            Start2PGame_Portrait(navController = navController, shVm = shVm)
-        else ->
-//            Start2PGame_Landscape()
-            Start2PGame_Portrait(navController = navController, shVm = shVm)
+    InsetContent {
+        when (orientation) {
+            Configuration.ORIENTATION_PORTRAIT ->
+                Start2PGame_Portrait(navController = navController, shVm = shVm)
+            else ->
+//                Start2Game_Landscape(navController = navController, shVm = shVm)
+                Start2PGame_Portrait(navController = navController, shVm = shVm)
+        }
     }
 }
 
 @Composable
 fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourViewModel) {
-    var player1Name by remember { mutableStateOf("Player 1") }
-    var player2Name by remember { mutableStateOf("Player 2") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,45 +45,22 @@ fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Two Player Game")
-
-        TextField(
-            value = player1Name,
-            onValueChange = { player1Name = it },
-            label = { Text("Enter Player 1 Name") }
+        Text(text = "Single Player Game")
+        GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
+            defaultProfile = shVm.player1Profile,
+            onProfileSelected = { shVm.twoPlayerProfileSelectionP1 = it },
+            prompt = "Select Player 1 Profile",
         )
-        TextField(
-            value = player2Name,
-            onValueChange = { player2Name = it },
-            label = { Text("Enter Player 2 Name") }
+        GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
+            defaultProfile = shVm.player2Profile,
+            onProfileSelected = { shVm.twoPlayerProfileSelectionP2 = it },
+            prompt = "Select Player 2 Profile",
         )
-
-        Button(
-            onClick = {
-                navController.navigate("connect4/2player/7/6/${player1Name}/${player2Name}")
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Standard Game (7x6)")
-        }
-
-        Button(
-            onClick = {
-                navController.navigate("connect4/2player/6/5/${player1Name}/${player2Name}")
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Small Game (6x5)")
-        }
-
-        Button(
-            onClick = {
-                navController.navigate("connect4/2player/8/7/${player1Name}/${player2Name}")
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Start Large Game (8x7)")
-        }
+        StartGameScreenButtons(
+            onStartStandard = { navController.navigate("connect4/2player/7/6/") },
+            onStartSmall = { navController.navigate("connect4/2player/6/5/}") },
+            onStartLarge = { navController.navigate("connect4/2player/8/7/") },
+        )
     }
 }
 
