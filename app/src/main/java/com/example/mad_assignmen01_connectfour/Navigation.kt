@@ -9,10 +9,14 @@ import androidx.navigation.compose.rememberNavController
 data object Routes{
     const val MAIN_MENU = "mainMenu"
     const val EDIT_PROFILES = "editProfiles"
-    const val GAME_START_MENU_1P = "gameStart/1Player"
-    const val GAME_START_MENU_2P = "gameStart/2Player"
-    const val GAME_1P = "connect4/1player"
-    const val GAME_2P = "connect4/2player"
+    const val START_GAME_MENU_1P = "gameStart/1Player"
+    const val START_GAME_MENU_2P = "gameStart/2Player"
+    const val GAME_1P_STANDARD_7_6 = "connect4/1player/standard"
+    const val GAME_1P_SMALL_6_5 = "connect4/1player/small"
+    const val GAME_1P_LARGE_8_7 = "connect4/1player/standard"
+    const val GAME_2P_STANDARD_7_6 = "connect4/1player/standard"
+    const val GAME_2P_SMALL_6_5 = "connect4/1player/small"
+    const val GAME_2P_LARGE_8_7 = "connect4/1player/standard"
 }
 
 @Composable
@@ -34,6 +38,35 @@ fun AppNavigation() {
             val gridWidth = backStackEntry.arguments?.getString("gridWidth")?.toInt() ?: 8
             val gridHeight = backStackEntry.arguments?.getString("gridHeight")?.toInt() ?: 7
             GameScreen(navController, isSinglePlayer = false, gridWidth = gridWidth, gridHeight = gridHeight)
+        composable(Routes.START_GAME_MENU_1P) { Start1PGameScreen(navController, sharedViewModel) }
+        composable(Routes.START_GAME_MENU_2P) { Start2PGameScreen(navController, sharedViewModel) }
+
+        // Single Player
+        composable(Routes.GAME_1P_STANDARD_7_6) {
+            GameScreen(sharedViewModel,
+                isSinglePlayer = true, gridWidth = 7, gridHeight = 6)
+        }
+        composable(Routes.GAME_1P_SMALL_6_5) {
+            GameScreen(sharedViewModel,
+                isSinglePlayer = true, gridWidth = 6, gridHeight = 5)
+        }
+        composable(Routes.GAME_1P_LARGE_8_7) {
+            GameScreen(sharedViewModel,
+                isSinglePlayer = true, gridWidth = 8, gridHeight = 7)
+        }
+
+        // Two Player
+        composable(Routes.GAME_2P_STANDARD_7_6) {
+            GameScreen(sharedViewModel,
+                isSinglePlayer = false, gridWidth = 7, gridHeight = 6)
+        }
+        composable(Routes.GAME_2P_SMALL_6_5) {
+            GameScreen(sharedViewModel,
+                isSinglePlayer = false, gridWidth = 6, gridHeight = 5)
+        }
+        composable(Routes.GAME_2P_LARGE_8_7) {
+            GameScreen(sharedViewModel,
+                isSinglePlayer = false, gridWidth = 8, gridHeight = 7)
         }
     }
 }

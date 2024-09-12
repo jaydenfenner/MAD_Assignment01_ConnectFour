@@ -1,6 +1,7 @@
 package com.example.mad_assignmen01_connectfour
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -56,8 +57,19 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
             onStartStandard = { navController.navigate("connect4/1player/7/6/") },
             onStartSmall = { navController.navigate("connect4/1player/6/5/") },
             onStartLarge = { navController.navigate("connect4/1player/8/7/") },
+            onStartStandard = { navController.navigate(Routes.GAME_1P_STANDARD_7_6) },
+            onStartSmall = { navController.navigate(Routes.GAME_1P_SMALL_6_5) },
+            onStartLarge = { navController.navigate(Routes.GAME_1P_LARGE_8_7) },
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Test() {
+    val sharedViewModel = viewModel<ConnectFourViewModel>()
+    GameScreen(sharedViewModel,
+        isSinglePlayer = true, gridWidth = 7, gridHeight = 6)
 }
 
 @Composable
@@ -77,6 +89,10 @@ fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourVie
                 onStartStandard = { navController.navigate("connect4/1player/7/6/") },
                 onStartSmall = { navController.navigate("connect4/1player/6/5/") },
                 onStartLarge = { navController.navigate("connect4/1player/8/7/") },
+            StartGameScreenButtons(
+                onStartStandard = { navController.navigate(Routes.GAME_1P_STANDARD_7_6) },
+                onStartSmall = { navController.navigate(Routes.GAME_1P_SMALL_6_5) },
+                onStartLarge = { navController.navigate(Routes.GAME_1P_LARGE_8_7) },
             )
         }
     }

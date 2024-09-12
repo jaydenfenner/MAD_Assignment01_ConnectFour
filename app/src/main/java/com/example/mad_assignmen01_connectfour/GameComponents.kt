@@ -1,6 +1,5 @@
 package com.example.mad_assignmen01_connectfour
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,8 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -116,17 +112,16 @@ fun Connect4Board(
     isSinglePlayer: Boolean,
     gameViewModel: GameViewModel,
     navController: NavHostController
+    gameVm: GameViewModel,
+    rows: Int,
+    columns: Int,
+    isSinglePlayer: Boolean,
 ) {
-    val board = gameViewModel.board.value
-    val currentPlayer = gameViewModel.currentPlayer
-    val gameMessage = gameViewModel.gameMessage
-    val gameOver = gameViewModel.gameOver
-    val moveStack = gameViewModel.moveStack
     val ai = Connect4AI()
-
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     Log.d("Connect4Board", "Board state rows: ${board.boardState.size}, columns: ${board.boardState[0].size}")
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -138,39 +133,37 @@ fun Connect4Board(
             Row {
                 for (col in 0 until columns) {
                     Connect4Cell(
-                        state = board.boardState[row][col],
+                        state = gameVm.board.boardState[row][col],
                         onClick = {
-                            if (!gameOver.value) {
+                            if (!gameVm.isGameOver) {
                                 handleCellClick(
-                                    row,
-                                    col,
-                                    board,
-                                    currentPlayer.value,
-                                    moveStack
+                                    row = row, col = col,
+                                    board = gameVm.board,
+                                    currentPlayer = gameVm.currentPlayer,
+                                    moveStack = gameVm.moveStack,
                                 ) { updatedBoard, nextPlayer ->
-                                    gameViewModel.saveMove()
-                                    gameViewModel.board.value = updatedBoard
-                                    gameViewModel.handleWin()
+                                    gameVm.saveStateToUndoStack()
+                                    gameVm.board = updatedBoard
 
-                                    if (!gameOver.value) {
-                                        currentPlayer.value = nextPlayer
+                                    gameVm.checkForAndHandleWin()
+                                    if (!gameVm.isGameOver) {
+                                        gameVm.currentPlayer = nextPlayer
                                     }
 
-                                    if (isSinglePlayer && currentPlayer.value == 2 && !gameOver.value) {
-                                        val aiMove = ai.getMove(board.boardState)
+                                    if (isSinglePlayer && gameVm.currentPlayer == 2 && !gameVm.isGameOver) {
+                                        val aiMove = ai.getMove(gameVm.board.boardState)
                                         if (aiMove != -1) {
                                             handleCellClick(
-                                                0,
-                                                aiMove,
-                                                board,
-                                                2,
-                                                moveStack
+                                                row = 0, col = aiMove,
+                                                board = gameVm.board,
+                                                currentPlayer = 2,
+                                                moveStack = gameVm.moveStack
                                             ) { updatedBoard, nextPlayer ->
-                                                gameViewModel.board.value = updatedBoard
-                                                gameViewModel.handleWin()
+                                                gameVm.board = updatedBoard
 
-                                                if (!gameOver.value) {
-                                                    currentPlayer.value = nextPlayer
+                                                gameVm.checkForAndHandleWin()
+                                                if (!gameVm.isGameOver) {
+                                                    gameVm.currentPlayer = nextPlayer
                                                 }
                                             }
                                         }
@@ -183,13 +176,13 @@ fun Connect4Board(
             }
         }
         Text(
-            text = "Current Turn: Player ${currentPlayer.value}",
+            text = "Current Turn: Player ${gameVm.currentPlayer}",
             modifier = Modifier.padding(top = 16.dp)
         )
 
-        if (gameMessage.value.isNotEmpty()) {
+        if (gameVm.gameMessage.isNotEmpty()) {
             Text(
-                text = gameMessage.value,
+                text = gameVm.gameMessage,
                 modifier = Modifier.padding(top = 16.dp),
                 color = Color.Red
             )
@@ -293,12 +286,27 @@ fun GameScreenPreview() {
 fun GameScreen(
     navController: NavHostController,
     shVm: ConnectFourViewModel = ConnectFourViewModel(),
+fun Preview_GameScreen() {
+    val shVm = viewModel<ConnectFourViewModel>()
+    val gameVm = viewModel<GameViewModel>()
+    GameScreen(shVm,
+        isSinglePlayer = true,
+        gridWidth = 8,
+        gridHeight = 8,
+    )
+}
+
+@Composable
+fun GameScreen(
+    shVm: ConnectFourViewModel,
     isSinglePlayer: Boolean = false,
-    gridWidth: Int = 7,
-    gridHeight: Int = 6,
-    player1Name: String = if (isSinglePlayer) shVm.singlePlayerProfileSelection.name else shVm.twoPlayerProfileSelectionP1.name,
-    player2Name: String = if (isSinglePlayer) shVm.computerProfile.name else shVm.twoPlayerProfileSelectionP2.name
+    gridWidth: Int,
+    gridHeight: Int,
 ) {
+    // initialise game view model and set board dims
+    val gameVm = viewModel<GameViewModel>()
+    gameVm.setBoardSize(boardWidth = gridWidth, boardHeight = gridHeight)
+
     val player1 = if (isSinglePlayer) shVm.singlePlayerProfileSelection
                     else shVm.twoPlayerProfileSelectionP1
     val player2 = if (isSinglePlayer) shVm.computerProfile
@@ -317,6 +325,12 @@ fun GameScreen(
                 rightProfile = player2,
             )
             Connect4Board(gridHeight, gridWidth, isSinglePlayer = isSinglePlayer, gameViewModel, navController)
+            Connect4Board(
+                gameVm = gameVm,
+                rows = gridWidth,
+                columns = gridHeight,
+                isSinglePlayer = isSinglePlayer,
+            )
         }
     }
 }
