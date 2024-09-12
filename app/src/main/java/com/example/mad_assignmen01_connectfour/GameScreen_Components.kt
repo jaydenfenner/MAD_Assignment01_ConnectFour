@@ -153,8 +153,21 @@ fun Circle(color: Color, cellSize: Dp) {
     )
 }
 
+@Preview(showBackground = true)
 @Composable
-fun ProfileDisplay(leftProfile: UserProfile, rightProfile: UserProfile) {
+fun Preview_ProfileDisplay() {
+    val vm = viewModel<ConnectFourViewModel>()
+    val gvm = viewModel<GameViewModel>()
+    ProfileDisplay(
+        leftProfile = vm.player1Profile,
+        rightProfile = vm.computerProfile,
+        gameVm = gvm
+    )
+}
+
+@Composable
+fun ProfileDisplay(gameVm: GameViewModel,
+    leftProfile: UserProfile, rightProfile: UserProfile) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -163,7 +176,7 @@ fun ProfileDisplay(leftProfile: UserProfile, rightProfile: UserProfile) {
         horizontalArrangement = Arrangement.Center
     ) {
         ProfileSelectorGridItem(
-            isSelected = true, // TODO need to update on game state
+            isSelected = (gameVm.currentPlayer == 1),
             userProfile = leftProfile,
             onClick = {}
         )
@@ -171,7 +184,7 @@ fun ProfileDisplay(leftProfile: UserProfile, rightProfile: UserProfile) {
         Spacer(modifier = Modifier.width(100.dp))
 
         ProfileSelectorGridItem(
-            isSelected = true, // TODO need to update on game state
+            isSelected = (gameVm.currentPlayer == 2),
             userProfile = rightProfile,
             onClick = {}
         )

@@ -61,6 +61,7 @@ fun GameScreen_Portrait(
         ProfileDisplay(
             leftProfile = player1,
             rightProfile = player2,
+            gameVm = gameVm,
         )
         Connect4Board(gameVm = gameVm)
     }
