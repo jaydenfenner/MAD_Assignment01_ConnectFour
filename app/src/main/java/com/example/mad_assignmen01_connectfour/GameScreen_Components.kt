@@ -36,6 +36,7 @@ fun GameControls(
     gameVm: GameViewModel,
 ) {
     Button(
+        enabled = (!gameVm.isGameOver && !gameVm.moveStack.isEmpty()),
         onClick = {gameVm.undoMove()},
         modifier = Modifier.padding(top = 16.dp)
     ) {
@@ -43,6 +44,7 @@ fun GameControls(
     }
 
     Button(
+            enabled = !gameVm.moveStack.isEmpty(),
             onClick = {gameVm.resetBoard()},
             modifier = Modifier.padding(top = 16.dp)
     ) {
@@ -108,6 +110,8 @@ fun Connect4Board(
             Row {
                 for (x in 0 until gameVm.width) {
                     Connect4Cell(
+                        totalCols = gameVm.width,
+                        totalRows = gameVm.height,
                         playerNumber = gameVm.board.boardState[y][x],
                         onClick = {
                             /** only allow click if game not over */
@@ -145,16 +149,17 @@ fun Connect4Board(
 }
 
 @Composable
-fun Connect4Cell(playerNumber: Int, onClick: () -> Unit) {
+fun Connect4Cell(totalRows: Int, totalCols: Int,
+        playerNumber: Int, onClick: () -> Unit) {
     val context = LocalContext.current
     val metrics = context.resources.displayMetrics
     val screenWidth = metrics.widthPixels / metrics.density
     val screenHeight = metrics.heightPixels / metrics.density
 
     val cellSize = if (screenWidth > screenHeight) {
-        (screenHeight / 13).dp
+        (screenHeight / totalRows * 0.75).dp
     } else {
-        (screenWidth / 11).dp
+        (screenWidth / totalCols * 0.75).dp
     }
 
     val color = when (playerNumber) {
@@ -188,8 +193,16 @@ fun Circle(color: Color, cellSize: Dp) {
 @Preview(showBackground = true)
 @Composable
 fun Preview_ProfileDisplay() {
-    val gvm = viewModel<GameViewModel>()
-    ProfileDisplay(gameVm = gvm)
+    val shVm = viewModel<ConnectFourViewModel>()
+    val gameVm = viewModel<GameViewModel>()
+    gameVm.initialise(
+        boardWidth = 7,
+        boardHeight = 6,
+        is1P = true,
+        p1_profile = shVm.player1Profile,
+        p2_profile = shVm.computerProfile,
+    )
+    ProfileDisplay(gameVm = gameVm)
 }
 
 @Composable

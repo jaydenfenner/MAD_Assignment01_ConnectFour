@@ -37,7 +37,7 @@ class GameViewModel() : ViewModel() {
     }
 
     var board by mutableStateOf(Board(rows = height, columns = width)) // individual board state
-    private val moveStack = Stack<Board>() // stack of previous board states
+    val moveStack = Stack<Board>() // stack of previous board states
     var currentPlayer by mutableIntStateOf(1)
     var gameMessage by mutableStateOf("")
     var isGameOver by mutableStateOf(false)
@@ -67,29 +67,32 @@ class GameViewModel() : ViewModel() {
         val aiMoveColumn = ai.getMove(board.boardState)
         if (aiMoveColumn != -1) {
             board.placePiece(col = aiMoveColumn, player = 2) // assume AI makes valid moves
-            currentPlayer = 1
             checkForAndHandleWin()
+            if (!isGameOver) {
+                currentPlayer = 1
+            }
         }
     }
 
     /** make move in current row (if valid) and add to stack */
-    fun makePlayerMove(col: Int): Boolean {
+    fun makePlayerMove(col: Int) {
         moveStack.push(board.copy()) // add to undo stack
         val moveWasValid = board.placePiece(col = col, player = currentPlayer) // try to make move
         if (!moveWasValid) {
             moveStack.push(board.copy()) // revert save if move invalid
         } else {
-            currentPlayer = if (currentPlayer == 1) 2 else 1
             checkForAndHandleWin()
+            if (!isGameOver) {
+                currentPlayer = if (currentPlayer == 1) 2 else 1
+            }
         }
-        return moveWasValid
     }
 
     /** pop one move off of move stack and update board */
     fun undoMove() {
-        if (moveStack.isNotEmpty()) {
+        if (moveStack.isNotEmpty() && !isGameOver) {
             board = moveStack.pop()
-            if (isSinglePlayer) {
+            if (!isSinglePlayer) {
                 currentPlayer = if (currentPlayer == 1) 2 else 1
             }
             isGameOver = false
