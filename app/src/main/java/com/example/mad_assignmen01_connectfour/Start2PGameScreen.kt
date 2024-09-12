@@ -46,13 +46,15 @@ fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Single Player Game")
-        GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
+        GamePlayerSelector(shVm = shVm, selectedProfile = shVm.twoPlayerProfileSelectionP1,
             defaultProfile = shVm.player1Profile,
+            unavailableProfile = shVm.twoPlayerProfileSelectionP2,
             onProfileSelected = { shVm.twoPlayerProfileSelectionP1 = it },
             prompt = "Select Player 1 Profile",
         )
-        GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
+        GamePlayerSelector(shVm = shVm, selectedProfile = shVm.twoPlayerProfileSelectionP2,
             defaultProfile = shVm.player2Profile,
+            unavailableProfile = shVm.twoPlayerProfileSelectionP1,
             onProfileSelected = { shVm.twoPlayerProfileSelectionP2 = it },
             prompt = "Select Player 2 Profile",
         )
@@ -78,6 +80,8 @@ fun Start2PGame_Landscape() {
 fun Start2PGame_Preview() {
     val navController = rememberNavController()
     val shVm = viewModel<ConnectFourViewModel>()
+    shVm.userProfiles.add(UserProfile("test", AvatarIDs.POO_EMOJI))
+    shVm.twoPlayerProfileSelectionP1 = shVm.userProfiles[0]
     Start2PGameScreen(navController, shVm)
 }
 

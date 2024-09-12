@@ -21,11 +21,17 @@ fun GameScreen(navController: NavHostController, shVm: ConnectFourViewModel,
                gridWidth: Int, gridHeight: Int
 ) {
     // initialise game view model and set board dims
+    val player1 = if (isSinglePlayer) shVm.singlePlayerProfileSelection
+            else shVm.twoPlayerProfileSelectionP1
+    val player2 = if (isSinglePlayer) shVm.computerProfile
+            else shVm.twoPlayerProfileSelectionP2
     val gameVm = viewModel<GameViewModel>()
     gameVm.initialise(
         boardWidth = gridWidth,
         boardHeight = gridHeight,
-        is1P = isSinglePlayer
+        is1P = isSinglePlayer,
+        p1_profile = player1,
+        p2_profile = player2,
     )
 
     val orientation = LocalConfiguration.current.orientation
@@ -58,12 +64,8 @@ fun GameScreen_Portrait(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProfileDisplay(
-            leftProfile = player1,
-            rightProfile = player2,
-            gameVm = gameVm,
-        )
-        Connect4Board(gameVm = gameVm, navController = navController)
+        ProfileDisplay(gameVm = gameVm)
+        Connect4Board(gameVm = gameVm)
     }
 }
 
@@ -78,7 +80,9 @@ fun GameScreen_Preview() {
     gameVm.initialise(
         boardWidth = 7,
         boardHeight = 6,
-        is1P = true
+        is1P = true,
+        p1_profile = shVm.player1Profile,
+        p2_profile = shVm.computerProfile,
     )
     GameScreen_Portrait(navController = navController,
         shVm = shVm, gameVm = gameVm)

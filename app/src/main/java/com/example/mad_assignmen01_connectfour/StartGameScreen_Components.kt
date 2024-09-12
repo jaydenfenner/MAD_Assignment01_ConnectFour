@@ -51,6 +51,7 @@ fun GamePlayerSelector(shVm: ConnectFourViewModel,
                        prompt: String,
                        selectedProfile: UserProfile,
                        defaultProfile: UserProfile,
+                       unavailableProfile: UserProfile? = null,
                        onProfileSelected: (profile: UserProfile) -> Unit,
 ) {
     Column(modifier = Modifier
@@ -67,10 +68,11 @@ fun GamePlayerSelector(shVm: ConnectFourViewModel,
                 columns = GridCells.Adaptive(minSize = 90.dp)
             ) {
                 item(span = {GridItemSpan(maxLineSpan)}) { Text("Default Profiles:") }
-                item { ProfileSelectorGridItem(selectedProfile, defaultProfile,
-                        onClick = {
-                            onProfileSelected(defaultProfile)
-                        }
+                item { ProfileSelectorGridItem(
+                    thisItemProfile = defaultProfile,
+                    selectedProfile = selectedProfile,
+                    unavailableProfile = unavailableProfile,
+                    onClick = { onProfileSelected(defaultProfile) }
                     )
                 }
                 item(span = {GridItemSpan(maxLineSpan)}) { Text("User Profiles:") }
@@ -80,7 +82,10 @@ fun GamePlayerSelector(shVm: ConnectFourViewModel,
                     }
                 }
                 items(shVm.userProfiles) {profile ->
-                    ProfileSelectorGridItem(selectedProfile, profile,
+                    ProfileSelectorGridItem(
+                        thisItemProfile = profile,
+                        selectedProfile = selectedProfile,
+                        unavailableProfile = unavailableProfile,
                         onClick = { onProfileSelected(profile) })
                 }
             }

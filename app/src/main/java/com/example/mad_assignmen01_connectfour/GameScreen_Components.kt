@@ -35,17 +35,16 @@ import java.util.Stack
  */
 @Composable
 fun GameControls(
-    gameVm: GameViewModel,
     navController: NavHostController,
-    is1P: Boolean
+    gameVm: GameViewModel,
 ) {
-
     Button(
         onClick = {gameVm.undoMove()},
         modifier = Modifier.padding(top = 16.dp)
     ) {
         Text(text = "Undo Move")
     }
+
     Button(
             onClick = {gameVm.resetBoard()},
             modifier = Modifier.padding(top = 16.dp)
@@ -64,7 +63,7 @@ fun GameControls(
         }
 
         Button(
-            onClick = { if(is1P) {
+            onClick = { if(gameVm.isSinglePlayer) {
                 navController.navigate(Routes.START_GAME_MENU_1P)
             }
             else{
@@ -80,12 +79,15 @@ fun GameControls(
 @Preview(showBackground = true)
 @Composable
 fun Preview_Connect4Board() {
+    val shVm = viewModel<ConnectFourViewModel>()
     val gameVm = viewModel<GameViewModel>()
     val navController = rememberNavController()
     gameVm.initialise(
         boardWidth = 7,
         boardHeight = 6,
-        is1P = true
+        is1P = true,
+        p1_profile = shVm.player1Profile,
+        p2_profile = shVm.computerProfile,
     )
     Connect4Board(gameVm, navController = navController)
 }
@@ -95,6 +97,10 @@ fun Connect4Board(
     gameVm: GameViewModel,
     navController: NavHostController
 ) {
+    val currentPlayerProfile = when (gameVm.currentPlayer) {
+        1 -> gameVm.p1Profile
+        else -> gameVm.p2Profile
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -125,7 +131,7 @@ fun Connect4Board(
             }
         }
         Text(
-            text = "Current Turn: Player ${gameVm.currentPlayer}",
+            text = "Current Turn: ${currentPlayerProfile.name}",
             modifier = Modifier.padding(top = 16.dp)
         )
 
@@ -137,7 +143,7 @@ fun Connect4Board(
             )
         }
 
-        GameControls(gameVm = gameVm, is1P = gameVm.isSinglePlayer, navController = navController)
+        GameControls(gameVm = gameVm, navController = navController)
     }
 }
 
@@ -185,18 +191,12 @@ fun Circle(color: Color, cellSize: Dp) {
 @Preview(showBackground = true)
 @Composable
 fun Preview_ProfileDisplay() {
-    val vm = viewModel<ConnectFourViewModel>()
     val gvm = viewModel<GameViewModel>()
-    ProfileDisplay(
-        leftProfile = vm.player1Profile,
-        rightProfile = vm.computerProfile,
-        gameVm = gvm
-    )
+    ProfileDisplay(gameVm = gvm)
 }
 
 @Composable
-fun ProfileDisplay(gameVm: GameViewModel,
-    leftProfile: UserProfile, rightProfile: UserProfile) {
+fun ProfileDisplay(gameVm: GameViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -206,7 +206,7 @@ fun ProfileDisplay(gameVm: GameViewModel,
     ) {
         ProfileSelectorGridItem(
             isSelected = (gameVm.currentPlayer == 1),
-            userProfile = leftProfile,
+            thisItemProfile = gameVm.p1Profile,
             onClick = {}
         )
 
@@ -214,7 +214,7 @@ fun ProfileDisplay(gameVm: GameViewModel,
 
         ProfileSelectorGridItem(
             isSelected = (gameVm.currentPlayer == 2),
-            userProfile = rightProfile,
+            thisItemProfile = gameVm.p2Profile,
             onClick = {}
         )
     }
