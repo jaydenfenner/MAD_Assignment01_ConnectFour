@@ -2,12 +2,19 @@ package com.example.mad_assignmen01_connectfour
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -42,15 +49,13 @@ fun GameScreen(navController: NavHostController, shVm: ConnectFourViewModel,
     )
 
     val orientation = LocalConfiguration.current.orientation
-    InsetContent {
-        when (orientation) {
-            Configuration.ORIENTATION_PORTRAIT ->
-                GameScreen_Portrait(navController = navController,
-                    shVm = shVm, gameVm = gameVm)
-            else ->
-                GameScreen_Portrait(navController = navController,
-                    shVm = shVm, gameVm = gameVm)
-        }
+    when (orientation) {
+        Configuration.ORIENTATION_PORTRAIT ->
+            GameScreen_Portrait(navController = navController,
+                shVm = shVm, gameVm = gameVm)
+        else ->
+            GameScreen_Landscape(navController = navController,
+                shVm = shVm, gameVm = gameVm)
     }
 }
 
@@ -69,7 +74,67 @@ fun GameScreen_Portrait(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileDisplay(shVm = shVm, gameVm = gameVm)
+        Row() {
+            Column() {
+                Text(gameVm.p1Profile.name)
+                ProfileStatistics(gameVm.p1Profile)
+            }
+            Spacer(Modifier.size(50.dp))
+            Column(){
+                Text(gameVm.p2Profile.name)
+                ProfileStatistics(gameVm.p2Profile)
+            }
+        }
         Connect4Board(shVm, gameVm, navController = navController)
+    }
+}
+@Composable
+fun GameScreen_Landscape(
+    navController: NavHostController,
+    shVm: ConnectFourViewModel,
+    gameVm: GameViewModel,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.LightGray),
+    ) {
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ProfileSelectorGridItem(
+                selectedColor = shVm.leftPlayerDiskColour,
+                isSelected = (gameVm.currentPlayer == 1),
+                thisItemProfile = gameVm.p1Profile,
+                onClick = {}
+            )
+            ProfileStatistics(gameVm.p1Profile)
+        }
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .weight(8f)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally){
+            Connect4Board(shVm, gameVm, navController = navController)
+        }
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ProfileSelectorGridItem(
+                selectedColor = shVm.rightPlayerDiskColour,
+                isSelected = (gameVm.currentPlayer == 2),
+                thisItemProfile = gameVm.p2Profile,
+                onClick = {}
+            )
+            ProfileStatistics(gameVm.p2Profile)
+        }
     }
 }
 
@@ -77,7 +142,7 @@ fun GameScreen_Portrait(
 // Previews:         (Ignoring large screens for now)
 // **********************************************************************************
 @Composable
-fun GameScreen_Preview() {
+fun GameScreenPortrait_Preview() {
     val navController = rememberNavController()
     val shVm = viewModel<ConnectFourViewModel>()
     val gameVm = viewModel<GameViewModel>()
@@ -92,17 +157,33 @@ fun GameScreen_Preview() {
         shVm = shVm, gameVm = gameVm)
 }
 
+
+@Composable
+fun GameScreenLandscape_Preview() {
+    val navController = rememberNavController()
+    val shVm = viewModel<ConnectFourViewModel>()
+    val gameVm = viewModel<GameViewModel>()
+    gameVm.initialise(
+        boardWidth = 7,
+        boardHeight = 6,
+        is1P = true,
+        p1_profile = shVm.player1Profile,
+        p2_profile = shVm.computerProfile,
+    )
+    GameScreen_Landscape(navController = navController,
+        shVm = shVm, gameVm = gameVm)
+}
 @Preview(name = "5-inch Device Portrait",
     widthDp = previewWidthDp, heightDp = previewHeightDp, showBackground = true)
 @Composable
 fun Preview5Inch_GameScreen() {
-    GameScreen_Preview()
+    GameScreenPortrait_Preview()
 }
 @Preview(name = "5-inch Device Landscape",
     widthDp = previewHeightDp, heightDp = previewWidthDp, showBackground = true)
 @Composable
 fun Preview5InchLand_GameScreen() {
-    GameScreen_Preview()
+    GameScreenLandscape_Preview()
 }
 
 // TODO check if we need these, my friend got 100% with no tablet layouts
