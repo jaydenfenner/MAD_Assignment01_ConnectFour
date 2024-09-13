@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -72,6 +74,17 @@ fun GameScreen_Portrait(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileDisplay(shVm = shVm, gameVm = gameVm)
+        Row() {
+            Column() {
+                Text(gameVm.p1Profile.name)
+                ProfileStatistics(gameVm.p1Profile)
+            }
+            Spacer(Modifier.size(50.dp))
+            Column(){
+                Text(gameVm.p2Profile.name)
+                ProfileStatistics(gameVm.p2Profile)
+            }
+        }
         Connect4Board(shVm, gameVm, navController = navController)
     }
 }
@@ -98,6 +111,7 @@ fun GameScreen_Landscape(
                 thisItemProfile = gameVm.p1Profile,
                 onClick = {}
             )
+            ProfileStatistics(gameVm.p1Profile)
         }
         Column(
             Modifier
@@ -119,6 +133,7 @@ fun GameScreen_Landscape(
                 thisItemProfile = gameVm.p2Profile,
                 onClick = {}
             )
+            ProfileStatistics(gameVm.p2Profile)
         }
     }
 }
