@@ -58,13 +58,16 @@ fun GameScreen(navController: NavHostController, shVm: ConnectFourViewModel,
                 shVm = shVm, gameVm = gameVm)
     }
 }
-
 @Composable
 fun GameScreen_Portrait(
     navController: NavHostController,
     shVm: ConnectFourViewModel,
     gameVm: GameViewModel,
 ) {
+    val currentPlayerProfile = when (gameVm.currentPlayer) {
+        1 -> gameVm.p1Profile
+        else -> gameVm.p2Profile
+    }
     Column(
         modifier = Modifier
             .background(color = Color.LightGray)
@@ -85,7 +88,15 @@ fun GameScreen_Portrait(
                 ProfileStatistics(gameVm.p2Profile)
             }
         }
+        DisplayGameMessage(gameVm)
         Connect4Board(shVm, gameVm, navController = navController)
+        Text(
+            text = "Current Turn: ${currentPlayerProfile.name}",
+            modifier = Modifier.padding(top = 16.dp)
+        )
+        CurrentGameData(gameVm)
+        DisplayGameMessage(gameVm)
+        GameControls(gameVm = gameVm, navController = navController)
     }
 }
 @Composable
@@ -119,7 +130,11 @@ fun GameScreen_Landscape(
                 .weight(8f)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally){
+            DisplayGameMessage(gameVm)
             Connect4Board(shVm, gameVm, navController = navController)
+            DisplayGameMessage(gameVm)
+            CurrentGameData(gameVm)
+            GameControls(gameVm = gameVm, navController = navController)
         }
         Column(
             Modifier
