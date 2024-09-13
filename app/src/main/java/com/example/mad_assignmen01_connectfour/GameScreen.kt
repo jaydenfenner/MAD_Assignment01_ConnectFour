@@ -89,7 +89,7 @@ fun GameScreen_Portrait(
             }
         }
         DisplayGameMessage(gameVm)
-        Connect4Board(shVm, gameVm, navController = navController)
+        Connect4Board(shVm, gameVm)
         Text(
             text = "Current Turn: ${currentPlayerProfile.name}",
             modifier = Modifier.padding(top = 16.dp)
@@ -131,7 +131,7 @@ fun GameScreen_Landscape(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally){
             DisplayGameMessage(gameVm)
-            Connect4Board(shVm, gameVm, navController = navController)
+            Connect4Board(shVm, gameVm)
             DisplayGameMessage(gameVm)
             CurrentGameData(gameVm)
             GameControls(gameVm = gameVm, navController = navController)
