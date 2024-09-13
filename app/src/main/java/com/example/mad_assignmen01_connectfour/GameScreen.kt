@@ -49,13 +49,19 @@ fun GameScreen(navController: NavHostController, shVm: ConnectFourViewModel,
     )
 
     val orientation = LocalConfiguration.current.orientation
-    when (orientation) {
-        Configuration.ORIENTATION_PORTRAIT ->
-            GameScreen_Portrait(navController = navController,
-                shVm = shVm, gameVm = gameVm)
-        else ->
-            GameScreen_Landscape(navController = navController,
-                shVm = shVm, gameVm = gameVm)
+    InsetContent {
+        when (orientation) {
+            Configuration.ORIENTATION_PORTRAIT ->
+                GameScreen_Portrait(
+                    navController = navController,
+                    shVm = shVm, gameVm = gameVm
+                )
+            else ->
+                GameScreen_Landscape(
+                    navController = navController,
+                    shVm = shVm, gameVm = gameVm
+                )
+        }
     }
 }
 @Composable

@@ -28,7 +28,7 @@ class GameViewModel() : ViewModel() {
         if (!hasBeenInitialised) {
             width = boardWidth
             height = boardHeight
-            board = Board(rows = height, columns = width)
+            board = Board(rows = height, columns = width) // individual board state
             isSinglePlayer = is1P
             p1Profile = p1_profile
             p2Profile = p2_profile
@@ -94,10 +94,10 @@ class GameViewModel() : ViewModel() {
 
     /** make move in current row (if valid) and add to stack */
     fun makePlayerMove(col: Int) {
-        moveStack.push(board.copy()) // add to undo stack
+        moveStack.push(board.getBoardCopy()) // add to undo stack
         val moveWasValid = board.placePiece(col = col, player = currentPlayer) // try to make move
         if (!moveWasValid) {
-            moveStack.push(board.copy()) // revert save if move invalid
+            moveStack.pop() // revert save if move invalid
         } else {
             checkForAndHandleWin()
             if (!isGameOver) {
