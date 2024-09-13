@@ -55,11 +55,23 @@ class GameViewModel() : ViewModel() {
     private fun checkForAndHandleWin() {
         val winner = board.checkWin()
         if (winner != 0) {
-            gameMessage = "Player $winner Wins!"
             isGameOver = true
+            if(winner == 1 )
+            {
+                gameMessage = "Player ${p1Profile.name} Wins!"
+                p1Profile.numberOfWins++
+                p2Profile.numberOfLosses++
+            }
+            else{
+                gameMessage = "Player ${p2Profile.name} Wins!"
+                p2Profile.numberOfWins++
+                p1Profile.numberOfLosses++
+            }
         } else if (board.isDraw()) {
             gameMessage = "It's a Draw!"
             isGameOver = true
+            p1Profile.numberOfDraws++
+            p2Profile.numberOfDraws++
         }
     }
 
