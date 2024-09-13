@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalConfiguration
@@ -43,11 +46,13 @@ import com.example.mad_assignmen01_connectfour.ui.theme.MAD_Assignmen01_ConnectF
 @Composable
 fun ChangeDisksScreen(shVm: ConnectFourViewModel) {
     val orientation = LocalConfiguration.current.orientation
-    when (orientation) {
-        Configuration.ORIENTATION_PORTRAIT ->
-            ChangeDisks_Portrait(shVm = shVm)
-        else ->
-            ChangeDisks_Portrait(shVm = shVm)
+    InsetContent {
+        when (orientation) {
+            Configuration.ORIENTATION_PORTRAIT ->
+                ChangeDisks_Portrait(shVm = shVm)
+            else ->
+                ChangeDisks_Landscape(shVm = shVm)
+        }
     }
 }
 
@@ -168,9 +173,33 @@ fun ChangeDisks_Portrait(shVm: ConnectFourViewModel) {
 }
 
 @Composable
-fun ChangeDisks_Landscape() {
-    Column(Modifier.fillMaxSize()) {
-        Text("Landscape")
+fun ChangeDisks_Landscape(shVm: ConnectFourViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row() {
+            Column(modifier = Modifier.weight(1f)) {
+                DiscColorSelector(
+                    prompt = "Disc Colour For Left Side:",
+                    selectedColor = shVm.leftPlayerDiskColour,
+                    unavailableColor = shVm.rightPlayerDiskColour,
+                    onClick = {shVm.leftPlayerDiskColour = it}
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                DiscColorSelector(
+                    prompt = "Disc Colour For Right Side:",
+                    selectedColor = shVm.rightPlayerDiskColour,
+                    unavailableColor = shVm.leftPlayerDiskColour,
+                    onClick = {shVm.rightPlayerDiskColour = it}
+                )
+            }
+        }
+
     }
 }
 
