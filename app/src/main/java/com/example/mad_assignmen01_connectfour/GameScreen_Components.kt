@@ -233,3 +233,16 @@ fun ProfileDisplay(shVm: ConnectFourViewModel, gameVm: GameViewModel) {
         )
     }
 }
+
+@Composable
+fun ProfileStatistics(
+    thisItemProfile: UserProfile)
+{
+    var total = (thisItemProfile.numberOfDraws + thisItemProfile.numberOfLosses + thisItemProfile.numberOfWins)
+    Column {
+        Text(text = "Wins: "+ thisItemProfile.numberOfWins)
+        Text(text = "Losses: "+ thisItemProfile.numberOfLosses)
+        Text(text = "Draws: " + thisItemProfile.numberOfDraws)
+        Text(text = "Total Games: " + total)
+    }
+}
