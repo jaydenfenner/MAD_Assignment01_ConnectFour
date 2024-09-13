@@ -36,8 +36,8 @@ class UserProfile(pName: String, pAvatarID: Int) {
     var numberOfDraws by mutableIntStateOf(0)
 
     fun winPercentString(): String {
-        val totalNum = numberOfDraws + numberOfWins + numberOfLosses
-        val winPercentage = if (totalNum != 0) {
+        val totalNum: Float = (numberOfDraws + numberOfWins + numberOfLosses).toFloat()
+        val winPercentage = if (totalNum != 0f) {
             "" + (numberOfWins / totalNum) * 100f + "%"
         } else {
             "no games yet"

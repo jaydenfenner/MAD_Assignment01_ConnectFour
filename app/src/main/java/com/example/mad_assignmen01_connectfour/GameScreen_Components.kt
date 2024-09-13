@@ -88,7 +88,7 @@ fun Preview_Connect4Board() {
         p1_profile = shVm.player1Profile,
         p2_profile = shVm.computerProfile,
     )
-    Connect4Board(shVm, gameVm, navController = navController)
+    Connect4Board(shVm, gameVm)
 }
 
 @Composable
@@ -103,8 +103,7 @@ fun DisplayGameMessage(gameVm: GameViewModel) {
 }
 @Composable
 fun Connect4Board(
-    shVm: ConnectFourViewModel, gameVm: GameViewModel,
-    navController: NavHostController
+    shVm: ConnectFourViewModel, gameVm: GameViewModel
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -119,7 +118,7 @@ fun Connect4Board(
                         shVm = shVm,
                         totalCols = gameVm.width,
                         totalRows = gameVm.height,
-                        playerNumber = gameVm.board.boardState[y][x],
+                        playerNumber = gameVm.board.boardState[y][x].value,
                         onClick = {
                             /** only allow click if game not over */
                             if (!gameVm.isGameOver) {

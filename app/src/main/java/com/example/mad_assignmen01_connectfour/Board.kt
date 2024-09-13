@@ -1,5 +1,9 @@
 package com.example.mad_assignmen01_connectfour
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+
 
 //Testing pushsdasdsa
 /**
@@ -8,17 +12,28 @@ package com.example.mad_assignmen01_connectfour
 data class Board(
     val rows: Int,
     val columns: Int,
-    var boardState: List<MutableList<Int>> = List(rows) { MutableList(columns) { 0 } }
+    var boardState: List<List<MutableState<Int>>> =
+        List(rows) {
+            List(columns) {
+                mutableIntStateOf(0)
+            }
+        }
 ) {
     fun reset() {
-        boardState = List(rows) { MutableList(columns) { 0 } }
+        boardState = List(rows) {
+            List(columns) {
+                mutableIntStateOf(0)
+            }
+        }
     }
+
+    val test = boardState[0][0].value
 
     /** place circle in column, return false if move is invalid */
     fun placePiece(col: Int, player: Int): Boolean {
         for (r in rows - 1 downTo 0) {
-            if (boardState[r][col] == 0) {
-                boardState[r][col] = player
+            if (boardState[r][col].value == 0) {
+                boardState[r][col].value = player
                 return true
             }
         }
@@ -28,34 +43,34 @@ data class Board(
     fun checkWin(): Int {
         for (row in boardState.indices) {
             for (col in boardState[row].indices) {
-                if (boardState[row][col] != 0) {
-                    val player = boardState[row][col]
+                if (boardState[row][col].value != 0) {
+                    val player = boardState[row][col].value
 
                     if (col + 3 < boardState[row].size &&
-                        player == boardState[row][col + 1] &&
-                        player == boardState[row][col + 2] &&
-                        player == boardState[row][col + 3]) {
+                        player == boardState[row][col + 1].value &&
+                        player == boardState[row][col + 2].value &&
+                        player == boardState[row][col + 3].value) {
                         return player
                     }
 
                     if (row + 3 < boardState.size &&
-                        player == boardState[row + 1][col] &&
-                        player == boardState[row + 2][col] &&
-                        player == boardState[row + 3][col]) {
+                        player == boardState[row + 1][col].value &&
+                        player == boardState[row + 2][col].value &&
+                        player == boardState[row + 3][col].value) {
                         return player
                     }
 
                     if (row + 3 < boardState.size && col + 3 < boardState[row].size &&
-                        player == boardState[row + 1][col + 1] &&
-                        player == boardState[row + 2][col + 2] &&
-                        player == boardState[row + 3][col + 3]) {
+                        player == boardState[row + 1][col + 1].value &&
+                        player == boardState[row + 2][col + 2].value &&
+                        player == boardState[row + 3][col + 3].value) {
                         return player
                     }
 
                     if (row - 3 >= 0 && col + 3 < boardState[row].size &&
-                        player == boardState[row - 1][col + 1] &&
-                        player == boardState[row - 2][col + 2] &&
-                        player == boardState[row - 3][col + 3]) {
+                        player == boardState[row - 1][col + 1].value &&
+                        player == boardState[row - 2][col + 2].value &&
+                        player == boardState[row - 3][col + 3].value) {
                         return player
                     }
                 }
@@ -65,7 +80,7 @@ data class Board(
     }
 
     fun isDraw(): Boolean {
-        return boardState.all { row -> row.all { it != 0 } }
+        return boardState.all { row -> row.all { it.value != 0 } }
     }
 
     fun copy(): Board {
