@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -42,6 +44,7 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -49,6 +52,7 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
         Text(text = "Single Player Game")
         GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
             prompt = "Please select a profile to use",
+            maxHeight = 10000.dp,
             selectedColor = shVm.leftPlayerDiskColour,
             defaultProfile = shVm.player1Profile,
             onProfileSelected = { shVm.singlePlayerProfileSelection = it },
@@ -61,26 +65,38 @@ fun Start1PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
     }
 }
 
-
 @Composable
 fun Start1PGame_Landscape(navController: NavHostController, shVm: ConnectFourViewModel) {
-    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+    Column(Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Text(text = "Single Player Game")
-        Row {
-            Column(Modifier.weight(1f)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 GamePlayerSelector(shVm = shVm, selectedProfile = shVm.singlePlayerProfileSelection,
                     prompt = "Please select a profile to use",
+                    maxHeight = 10000.dp,
                     selectedColor = shVm.leftPlayerDiskColour,
                     defaultProfile = shVm.player1Profile,
                     onProfileSelected = { shVm.singlePlayerProfileSelection = it },
                 )
             }
             StartGameScreenButtons(
+                modifier = Modifier.weight(1f),
                 onStartStandard = { navController.navigate(Routes.GAME_1P_STANDARD_7_6) },
                 onStartSmall = { navController.navigate(Routes.GAME_1P_SMALL_6_5) },
                 onStartLarge = { navController.navigate(Routes.GAME_1P_LARGE_8_7) },
             )
         }
+
     }
 }
 

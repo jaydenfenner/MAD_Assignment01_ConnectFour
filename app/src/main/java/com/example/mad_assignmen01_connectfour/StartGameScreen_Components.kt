@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -53,6 +55,7 @@ fun StartGameScreenButtons(
 fun GamePlayerSelector(shVm: ConnectFourViewModel,
                        prompt: String,
                        selectedColor: Color,
+                       maxHeight: Dp = 400.dp,
                        selectedProfile: UserProfile,
                        defaultProfile: UserProfile,
                        unavailableProfile: UserProfile? = null,
@@ -61,7 +64,7 @@ fun GamePlayerSelector(shVm: ConnectFourViewModel,
     val context = LocalContext.current
     Column(modifier = Modifier
         .fillMaxWidth()
-        .heightIn(max = 400.dp)) {
+        .heightIn(max = maxHeight)) {
         Text(prompt, fontSize = 20.sp)
         Column(
             Modifier
