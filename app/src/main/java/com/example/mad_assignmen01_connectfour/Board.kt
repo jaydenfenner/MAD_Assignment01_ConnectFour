@@ -19,6 +19,16 @@ data class Board(
             }
         }
 ) {
+    fun getBoardCopy(): Board {
+        val newBoard = Board(rows, columns)
+        for (y in 0 until rows) {
+            for (x in 0 until columns) {
+                newBoard.boardState[y][x].value = boardState[y][x].value
+            }
+        }
+        return newBoard
+    }
+
     fun reset() {
         boardState = List(rows) {
             List(columns) {
