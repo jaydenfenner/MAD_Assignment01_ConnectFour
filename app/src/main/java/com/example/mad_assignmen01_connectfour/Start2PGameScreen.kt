@@ -44,7 +44,7 @@ fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
     ) {
         Text(text = "Single Player Game")
         GamePlayerSelector(shVm = shVm, selectedProfile = shVm.twoPlayerProfileSelectionP1,
-            maxHeight = 1000.dp,
+            maxHeight = 10000.dp,
             defaultProfile = shVm.player1Profile,
             unavailableProfile = shVm.twoPlayerProfileSelectionP2,
             onProfileSelected = { shVm.twoPlayerProfileSelectionP1 = it },
@@ -53,7 +53,7 @@ fun Start2PGame_Portrait(navController: NavHostController, shVm: ConnectFourView
         )
         GamePlayerSelector(shVm = shVm, selectedProfile = shVm.twoPlayerProfileSelectionP2,
             prompt = "Select Player 2 Profile",
-            maxHeight = 1000.dp,
+            maxHeight = 10000.dp,
             defaultProfile = shVm.player2Profile,
             unavailableProfile = shVm.twoPlayerProfileSelectionP1,
             onProfileSelected = { shVm.twoPlayerProfileSelectionP2 = it },
@@ -85,7 +85,7 @@ fun Start2Game_Landscape(navController: NavHostController, shVm: ConnectFourView
                 verticalArrangement = Arrangement.Center
             ) {
                 GamePlayerSelector(shVm = shVm, selectedProfile = shVm.twoPlayerProfileSelectionP1,
-                    maxHeight = 400.dp,
+                    maxHeight = 10000.dp,
                     defaultProfile = shVm.player1Profile,
                     unavailableProfile = shVm.twoPlayerProfileSelectionP2,
                     onProfileSelected = { shVm.twoPlayerProfileSelectionP1 = it },
@@ -94,7 +94,7 @@ fun Start2Game_Landscape(navController: NavHostController, shVm: ConnectFourView
                 )
                 GamePlayerSelector(shVm = shVm, selectedProfile = shVm.twoPlayerProfileSelectionP2,
                     prompt = "Select Player 2 Profile",
-                    maxHeight = 400.dp,
+                    maxHeight = 10000.dp,
                     defaultProfile = shVm.player2Profile,
                     unavailableProfile = shVm.twoPlayerProfileSelectionP1,
                     onProfileSelected = { shVm.twoPlayerProfileSelectionP2 = it },
