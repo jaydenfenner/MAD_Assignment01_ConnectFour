@@ -51,6 +51,12 @@ class GameViewModel() : ViewModel() {
         moveStack.clear()
     }
 
+    fun movesMade() = moveStack.count() * if(isSinglePlayer) 2 else 1
+    fun movesRemaining(): Int {
+        val totalSpaces = height * width
+        return totalSpaces - movesMade()
+    }
+
     /** update game message if game is over */
     private fun checkForAndHandleWin() {
         val winner = board.checkWin()

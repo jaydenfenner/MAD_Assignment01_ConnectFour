@@ -92,14 +92,20 @@ fun Preview_Connect4Board() {
 }
 
 @Composable
+fun DisplayGameMessage(gameVm: GameViewModel) {
+    if (gameVm.gameMessage.isNotEmpty()) {
+        Text(
+            text = gameVm.gameMessage,
+            modifier = Modifier.padding(top = 16.dp),
+            color = Color.Red
+        )
+    }
+}
+@Composable
 fun Connect4Board(
     shVm: ConnectFourViewModel, gameVm: GameViewModel,
     navController: NavHostController
 ) {
-    val currentPlayerProfile = when (gameVm.currentPlayer) {
-        1 -> gameVm.p1Profile
-        else -> gameVm.p2Profile
-    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -132,20 +138,6 @@ fun Connect4Board(
                 }
             }
         }
-        Text(
-            text = "Current Turn: ${currentPlayerProfile.name}",
-            modifier = Modifier.padding(top = 16.dp)
-        )
-
-        if (gameVm.gameMessage.isNotEmpty()) {
-            Text(
-                text = gameVm.gameMessage,
-                modifier = Modifier.padding(top = 16.dp),
-                color = Color.Red
-            )
-        }
-
-        GameControls(gameVm = gameVm, navController = navController)
     }
 }
 
@@ -234,15 +226,31 @@ fun ProfileDisplay(shVm: ConnectFourViewModel, gameVm: GameViewModel) {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun ProfileStatistics(
-    thisItemProfile: UserProfile)
+    thisItemProfile: UserProfile = UserProfile("name", 1)
+)
 {
-    var total = (thisItemProfile.numberOfDraws + thisItemProfile.numberOfLosses + thisItemProfile.numberOfWins)
+    val total = (thisItemProfile.numberOfDraws + thisItemProfile.numberOfLosses + thisItemProfile.numberOfWins)
+    val winPercentString = thisItemProfile.winPercentString()
     Column {
         Text(text = "Wins: "+ thisItemProfile.numberOfWins)
         Text(text = "Losses: "+ thisItemProfile.numberOfLosses)
         Text(text = "Draws: " + thisItemProfile.numberOfDraws)
-        Text(text = "Total Games: " + total)
+        Text(text = "Win%: $winPercentString")
+        Text(text = "Total Games: $total")
+    }
+}
+
+@Composable
+fun CurrentGameData(
+    gameVm: GameViewModel
+) {
+    val movesMade = gameVm.movesMade()
+    val movesRemaining = gameVm.movesRemaining()
+    Column {
+        Text(text = "Moves Made: $movesMade" )
+        Text(text = "Moves Left: $movesRemaining")
     }
 }
