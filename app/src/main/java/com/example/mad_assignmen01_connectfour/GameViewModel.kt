@@ -16,7 +16,10 @@ class GameViewModel() : ViewModel() {
         private set
     var height = 1
         private set
+
     private val ai = Connect4AI()
+    private val superAI = SuperAI()
+
     var isSinglePlayer = false
     var p1Profile = UserProfile(pName = "", pAvatarID = 0)
     var p2Profile = UserProfile(pName = "", pAvatarID = 0)
@@ -41,6 +44,22 @@ class GameViewModel() : ViewModel() {
     var currentPlayer by mutableIntStateOf(1)
     var gameMessage by mutableStateOf("")
     var isGameOver by mutableStateOf(false)
+
+    fun getPosition(): Position {
+        val position = Position(
+            boardWidth = width, boardHeight = height,
+            currentPlayer = currentPlayer)
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                val disc = board.boardState[height-1 -y][x].value // flip height to x>y^
+                if (disc != 0) {
+                    position.board[x][y] = disc
+                    position.columnHeight[x] += 1
+                }
+            }
+        }
+        return position
+    }
 
     /** Set board to initial blank state, clear move stack */
     fun resetBoard() {
@@ -82,6 +101,7 @@ class GameViewModel() : ViewModel() {
     }
 
     fun makeAIMove() {
+//        val aiMoveColumn = ai.getMove(board.boardState)
         val aiMoveColumn = ai.getMove(board.boardState)
         if (aiMoveColumn != -1) {
             board.placePiece(col = aiMoveColumn, player = 2) // assume AI makes valid moves

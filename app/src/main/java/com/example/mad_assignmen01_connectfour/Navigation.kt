@@ -25,7 +25,9 @@ fun AppNavigation() {
     val sharedViewModel = viewModel<ConnectFourViewModel>()
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Routes.MAIN_MENU) {
+//    NavHost(navController = navController, startDestination = Routes.MAIN_MENU) {
+    NavHost(navController = navController, startDestination = Routes.GAME_1P_SMALL_6_5) {
+
         composable(Routes.MAIN_MENU) {MainMenuScreen(navController, sharedViewModel) }
         composable(Routes.EDIT_PROFILES) { EditProfilesScreen(sharedViewModel) }
         composable(Routes.CHANGE_DISK_COLORS) { ChangeDisksScreen(sharedViewModel) }

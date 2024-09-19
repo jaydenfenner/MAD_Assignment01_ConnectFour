@@ -83,18 +83,19 @@ fun GameScreen_Portrait(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileDisplay(shVm = shVm, gameVm = gameVm)
-        Row() {
-            Column() {
-                Text(gameVm.p1Profile.name)
-                ProfileStatistics(gameVm.p1Profile)
-            }
-            Spacer(Modifier.size(50.dp))
-            Column(){
-                Text(gameVm.p2Profile.name)
-                ProfileStatistics(gameVm.p2Profile)
-            }
-        }
+//        Row() {
+//            Column() {
+//                Text(gameVm.p1Profile.name)
+//                ProfileStatistics(gameVm.p1Profile)
+//            }
+//            Spacer(Modifier.size(50.dp))
+//            Column(){
+//                Text(gameVm.p2Profile.name)
+//                ProfileStatistics(gameVm.p2Profile)
+//            }
+//        }
         DisplayGameMessage(gameVm)
+        Text(text = gameVm.getPosition().boardString())
         Connect4Board(shVm, gameVm)
         Text(
             text = "Current Turn: ${currentPlayerProfile.name}",
