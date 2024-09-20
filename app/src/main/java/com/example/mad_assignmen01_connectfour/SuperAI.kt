@@ -37,11 +37,10 @@ class AI {
             var bestMove = movesToTry[0] // default to closest to center if all losing (should rarely happen)
             Log.d("validMoves", "trying moves: ${movesToTry.contentToString()}")
             for (x in movesToTry) {
-                val score = minimax(
+                val (score, _) = minimax(
                     pos = pos.spawnNextPosition(x),
                     depth = lookAhead-1,
                     heuristicFunction = PositionHeuristics::alwaysDraw,
-                    tempPlayed = x
                 )
                 Log.d("score", "score for move: $x is $score")
                 // this comparison implicitly plays equal scoring moves from center outwards
@@ -86,38 +85,50 @@ fun getValidMovesInOrder(pos: Position): IntArray {
 fun minimax(
     pos: Position,
     depth: Int,
-    heuristicFunction: (pos: Position) -> Int,
-    tempPlayed: Int=0
-): Int {
+    heuristicFunction: (pos: Position) -> Int
+): Pair<Int, Boolean> {
     /** base case 1: draw game */
-    if (pos.isDraw()) return 0
+    if (pos.isDraw()) return Pair(0, false)
 
     /** base case 2: win if winning move is available */
     if (pos.checkWinningMove() != -1) { // a winning move was found for the current player
-        return if (pos.currentPlayer == 2) Int.MAX_VALUE else Int.MIN_VALUE
+        return Pair(if (pos.currentPlayer == 2) Int.MAX_VALUE else Int.MIN_VALUE, true)
     }
 
     /** base case 1: depth is 0 -> perform static evaluation of position */
-    if (depth == 0) return heuristicFunction(pos)
+    if (depth == 0) return Pair(heuristicFunction(pos), false)
 
     /** else recursively check moves in order */
     val orderedMoves = getValidMovesInOrder(pos)
+    var isEndgame = false // flag for whether position returned is definitely a win or loss
+
     if (pos.currentPlayer == 2) { // p2 is maximising player
+        /** if current player is player 2, then maximise */
         var maxScore: Int = Int.MIN_VALUE
         for (move in orderedMoves) {
             val childPos = pos.spawnNextPosition(x = move)
-            val score = minimax(pos = childPos, depth = depth-1, heuristicFunction)
-            maxScore = max(score, maxScore)
+            var (score, childIsEndgame) = minimax(pos = childPos, depth = depth-1, heuristicFunction)
+            // reduce win score by num moves until win, increase loss score by moves until loss
+            if(childIsEndgame) {score += if(score > 0) -1 else 1}
+
+            if (score > maxScore) {
+                maxScore = score
+                isEndgame = childIsEndgame
+            }
         }
-        return maxScore
+        return Pair(maxScore, isEndgame)
     }
     else { // p1 is minimising player
+        /** if current player is player 2, then minimise */
         var minScore: Int = Int.MAX_VALUE
         for (move in orderedMoves) {
             val childPos = pos.spawnNextPosition(x = move)
-            val score = minimax(pos = childPos, depth = depth-1, heuristicFunction)
-            minScore = min(score, minScore)
+            val (score, childIsEndgame) = minimax(pos = childPos, depth = depth-1, heuristicFunction)
+            if (score < minScore) {
+                minScore = score
+                isEndgame = childIsEndgame
+            }
         }
-        return minScore
+        return Pair(minScore, isEndgame)
     }
 }
