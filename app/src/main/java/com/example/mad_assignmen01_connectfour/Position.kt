@@ -19,16 +19,26 @@ class Position(val boardWidth: Int, val boardHeight: Int,
 
     /**
      * make move in x and return new position instance after move
+     * (toggle current player)
      */
     fun spawnNextPosition(x: Int): Position {
-        val nextPos = Position(
-            boardWidth = boardWidth,
-            boardHeight = boardHeight,
-            currentPlayer = if(currentPlayer == 2) 1 else 2
-        )
+        // clone the current position
+        val nextPos = Position(boardWidth, boardHeight, currentPlayer)
         nextPos.board = Array(board.size) { board[it].clone() } // pass by value copy of board
         nextPos.columnHeight = columnHeight.clone()
+
+        nextPos.makeMove(x) // make move in next position
         return nextPos
+    }
+
+    /***
+     * place piece in board and toggle current player
+     * (Must be called with a valid move)
+     */
+    fun makeMove(x: Int) {
+        board[x][columnHeight[x]] = currentPlayer
+        columnHeight[x] += 1
+        currentPlayer = if(currentPlayer == 2) 1 else 2
     }
 
     /** return true if the game is a draw (i.e. board is full) */
@@ -65,7 +75,7 @@ class Position(val boardWidth: Int, val boardHeight: Int,
         // check left within valid bounds (left-to-right from x-3 to x-1), use dx for diagonals
         // x + dx < 0 is too far to left (note dx negative)
         var horizontal = 0; var upDiag = 0; var downDiag = 0
-        for (dx in max(-x, -3) until 0) {
+        for (dx in max(-x, -3) .. -1) {
             if (board[x+dx][moveHeight] == currentPlayer) horizontal += 1 else horizontal = 0
             if (moveHeight + dx >= 0) {
                 if(board[x+dx][moveHeight + dx] == currentPlayer) upDiag += 1 else upDiag = 0 }
@@ -80,7 +90,7 @@ class Position(val boardWidth: Int, val boardHeight: Int,
 
         // check right within valid bounds (left-to-right from x+1 to x+3), use dx for diagonals
         // x + dx >= boardWidth - 1 is too far to right
-        for (dx in 1 until 1+ min(3, boardWidth-1 -x)) {
+        for (dx in 1 .. min(3, boardWidth-1 -x)) {
             if (board[x+dx][moveHeight] == currentPlayer) horizontal += 1 else horizontal = 0
             if (moveHeight + dx < boardHeight) {
                 if (board[x + dx][moveHeight + dx] == currentPlayer) upDiag += 1 else upDiag = 0 }

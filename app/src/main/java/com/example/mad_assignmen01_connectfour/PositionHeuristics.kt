@@ -5,11 +5,15 @@ package com.example.mad_assignmen01_connectfour
  *
  * All methods take a Position instance and return a signed integer
  */
-class PositionHeuristics {
+object PositionHeuristics {
 
 
     /**
      * Simplest and worst, just assign equal (draw) weight to all positions
      */
-    fun randomPlay(pos: Position) = 0
+    fun alwaysDraw(pos: Position) = 0
 }
+
+//fun testGetScore(pos: Position): Int {
+//    return PositionHeuristics.randomPlay(pos)
+//}

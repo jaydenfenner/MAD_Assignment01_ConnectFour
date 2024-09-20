@@ -4,8 +4,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 
-
-//Testing pushsdasdsa
 /**
  * boardState is a list of mutable lists, indexed as [y,x]
  */
@@ -36,8 +34,6 @@ data class Board(
             }
         }
     }
-
-    val test = boardState[0][0].value
 
     /** place circle in column, return false if move is invalid */
     fun placePiece(col: Int, player: Int): Boolean {

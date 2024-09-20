@@ -17,8 +17,7 @@ class GameViewModel() : ViewModel() {
     var height = 1
         private set
 
-    private val ai = Connect4AI()
-    private val superAI = SuperAI()
+    private val randomAI = Connect4AI()
 
     var isSinglePlayer = false
     var p1Profile = UserProfile(pName = "", pAvatarID = 0)
@@ -101,8 +100,9 @@ class GameViewModel() : ViewModel() {
     }
 
     fun makeAIMove() {
-//        val aiMoveColumn = ai.getMove(board.boardState)
-        val aiMoveColumn = ai.getMove(board.boardState)
+//        val aiMoveColumn = randomAI.getMove(board.boardState) // old random AI
+        val ai = AI.EvenWeight(lookAhead = 3)
+        val aiMoveColumn = ai.getMove(getPosition()) // new minimax AI
         if (aiMoveColumn != -1) {
             board.placePiece(col = aiMoveColumn, player = 2) // assume AI makes valid moves
             checkForAndHandleWin()
