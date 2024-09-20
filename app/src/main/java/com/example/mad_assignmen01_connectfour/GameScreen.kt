@@ -32,13 +32,19 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun GameScreen(navController: NavHostController, shVm: ConnectFourViewModel,
                isSinglePlayer: Boolean,
-               gridWidth: Int, gridHeight: Int
+               gridWidth: Int, gridHeight: Int,
+               isAIPlayer1: Boolean = false // TODO extra option for AI as P1
 ) {
     // initialise game view model and set board dims
-    val player1 = if (isSinglePlayer) shVm.singlePlayerProfileSelection
+    var player1 = if (isSinglePlayer) shVm.singlePlayerProfileSelection
             else shVm.twoPlayerProfileSelectionP1
-    val player2 = if (isSinglePlayer) shVm.computerProfile
+    var player2 = if (isSinglePlayer) shVm.computerProfile
             else shVm.twoPlayerProfileSelectionP2
+
+    if (isAIPlayer1) { // TODO switch players if AI as P1
+        val temp = player1; player1 = player2; player2 = temp
+    }
+
     val gameVm = viewModel<GameViewModel>()
     gameVm.initialise(
         boardWidth = gridWidth,
@@ -46,6 +52,7 @@ fun GameScreen(navController: NavHostController, shVm: ConnectFourViewModel,
         is1P = isSinglePlayer,
         p1_profile = player1,
         p2_profile = player2,
+        isAiP1 = isAIPlayer1, // TODO extra option for AI as P1
     )
 
     val orientation = LocalConfiguration.current.orientation

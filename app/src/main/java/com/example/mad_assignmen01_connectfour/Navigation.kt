@@ -18,6 +18,8 @@ data object Routes{
     const val GAME_2P_STANDARD_7_6 = "connect4/2player/standard"
     const val GAME_2P_SMALL_6_5 = "connect4/2player/small"
     const val GAME_2P_LARGE_8_7 = "connect4/2player/Large"
+
+    const val GAME_AI_AS_P1 = "game/aiAsPlayer1"
 }
 
 @Composable
@@ -26,7 +28,8 @@ fun AppNavigation() {
     val navController = rememberNavController()
 
 //    NavHost(navController = navController, startDestination = Routes.MAIN_MENU) {
-    NavHost(navController = navController, startDestination = Routes.GAME_1P_SMALL_6_5) {
+//    NavHost(navController = navController, startDestination = Routes.GAME_1P_SMALL_6_5) {
+    NavHost(navController = navController, startDestination = Routes.GAME_AI_AS_P1) { // TODO extra option for AI as P1
 
         composable(Routes.MAIN_MENU) {MainMenuScreen(navController, sharedViewModel) }
         composable(Routes.EDIT_PROFILES) { EditProfilesScreen(sharedViewModel) }
@@ -60,6 +63,13 @@ fun AppNavigation() {
         composable(Routes.GAME_2P_LARGE_8_7) {
             GameScreen(navController,sharedViewModel,
                 isSinglePlayer = false, gridWidth = 8, gridHeight = 7)
+        }
+
+        /** EXTRA */
+        composable(Routes.GAME_AI_AS_P1) { // TODO extra option for AI as P1
+            GameScreen(navController,sharedViewModel,
+                isSinglePlayer = true, gridWidth = 7, gridHeight = 6,
+                isAIPlayer1 = true)
         }
     }
 }

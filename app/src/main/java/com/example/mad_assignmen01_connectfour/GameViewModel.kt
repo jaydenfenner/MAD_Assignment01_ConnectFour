@@ -20,12 +20,14 @@ class GameViewModel() : ViewModel() {
     private val randomAI = Connect4AI()
 
     var isSinglePlayer = false
+    var isAIPlayer1 = false
     var p1Profile = UserProfile(pName = "", pAvatarID = 0)
     var p2Profile = UserProfile(pName = "", pAvatarID = 0)
     private var hasBeenInitialised by mutableStateOf(false)
 
     fun initialise(boardWidth: Int, boardHeight: Int,
                    is1P: Boolean, p1_profile: UserProfile, p2_profile: UserProfile,
+                   isAiP1: Boolean = false, // TODO extra arg for AI as player 1
     ) {
         if (!hasBeenInitialised) {
             width = boardWidth
@@ -35,6 +37,9 @@ class GameViewModel() : ViewModel() {
             p1Profile = p1_profile
             p2Profile = p2_profile
             hasBeenInitialised = true
+
+            isAIPlayer1 = isAiP1 // TODO extra arg for AI as player 1
+            if (isAiP1) makeAIMove()
         }
     }
 
@@ -102,12 +107,12 @@ class GameViewModel() : ViewModel() {
     fun makeAIMove() {
 //        val aiMoveColumn = randomAI.getMove(board.boardState) // old random AI
         val ai = AI.EvenWeight(lookAhead = 3)
-        val aiMoveColumn = ai.getMove(getPosition()) // new minimax AI
+        val aiMoveColumn = ai.getMove(getPosition()) // new minimax AI for current position
         if (aiMoveColumn != -1) {
-            board.placePiece(col = aiMoveColumn, player = 2) // assume AI makes valid moves
+            board.placePiece(col = aiMoveColumn, player = currentPlayer) // assume AI makes valid moves
             checkForAndHandleWin()
             if (!isGameOver) {
-                currentPlayer = 1
+                currentPlayer = if(currentPlayer == 2) 1 else 2
             }
         }
     }

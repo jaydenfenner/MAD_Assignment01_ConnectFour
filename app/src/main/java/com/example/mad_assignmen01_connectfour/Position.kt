@@ -35,7 +35,7 @@ class Position(val boardWidth: Int, val boardHeight: Int,
      * place piece in board and toggle current player
      * (Must be called with a valid move)
      */
-    fun makeMove(x: Int) {
+    private fun makeMove(x: Int) {
         board[x][columnHeight[x]] = currentPlayer
         columnHeight[x] += 1
         currentPlayer = if(currentPlayer == 2) 1 else 2
@@ -104,7 +104,7 @@ class Position(val boardWidth: Int, val boardHeight: Int,
     }
 
     /** True if the specified column is not full */
-    fun canPlay(x: Int): Boolean = (columnHeight[x] < boardHeight)
+    private fun canPlay(x: Int): Boolean = (columnHeight[x] < boardHeight)
 
     /** return string representing board for debugging */
     fun boardString(): String {

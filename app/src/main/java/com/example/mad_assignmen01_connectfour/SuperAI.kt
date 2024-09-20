@@ -8,71 +8,65 @@ import kotlin.math.min
  * Class to handle the minimax search tree of positions
  */
 class AI {
-    /**
-     * interface to ensure different AIs contain the same methods
-     */
+    /** interface to ensure different AIs contain the same methods */
     interface MinimaxAI {
         /** should never be called in a draw position */
         fun getMove(pos: Position): Int
     }
 
-    /**
-     * Makes winning move if available at depth 0, searches ahead 'depth' moves
-     * Otherwise plays first valid move from centre outwards
+    /** AI with minimax:
+     * Makes winning move if available at depth 0, searches ahead 'lookAhead' moves
      *
-     * NOTE ONLY FOR PLAYER 2 FOR NOW
+     * Heuristic ranks all non-final positions evenly, so AI plays center columns first
      */
     class EvenWeight(val lookAhead: Int): MinimaxAI {
         override fun getMove(pos: Position): Int {
-            /** play winning move if available */
-            val winningMove = pos.checkWinningMove()
-            if (winningMove != -1) return winningMove
-
-            /** check valid moves, if lookahead = 0 just play first valid move */
-            val movesToTry = getValidMovesInOrder(pos)
-            if (lookAhead == 0) return movesToTry[0] // return first valid move if no lookahead
-
-            /** play best candidate move after looking ahead to 'lookAhead' depth */
-            var bestScore = Int.MIN_VALUE
-            var bestMove = movesToTry[0] // default to closest to center if all losing (should rarely happen)
-            Log.d("validMoves", "trying moves: ${movesToTry.contentToString()}")
-            for (x in movesToTry) {
-                val (score, _) = minimax(
-                    pos = pos.spawnNextPosition(x),
-                    depth = lookAhead-1,
-                    heuristicFunction = PositionHeuristics::alwaysDraw,
-                )
-                Log.d("score", "score for move: $x is $score")
-                // this comparison implicitly plays equal scoring moves from center outwards
-                if (score > bestScore) {
-                    bestScore = score
-                    bestMove = x
-                }
-            }
-            return bestMove
+            return baseGetMove(pos = pos, lookAhead = lookAhead,
+                heuristicFunction = PositionHeuristics::alwaysDraw
+            )
         }
     }
 }
 
 /**
- * return array of valid cols to try starting from the middle and working outwards
+ * Makes winning move if available at depth 0, searches ahead 'lookAhead' moves
+ * @param heuristicFunction determines how to rank candidate positions at max depth
  */
-fun getValidMovesInOrder(pos: Position): IntArray {
-    val validMovesMask = pos.validMovesMask()
-    var moves = IntArray(0)
-    val center = pos.boardWidth / 2 - 1 // integer division, left of centre if even size
+fun baseGetMove(pos: Position, lookAhead: Int,
+                heuristicFunction: (pos: Position) -> Int
+): Int {
+    /** play winning move if available */
+    val winningMove = pos.checkWinningMove()
+    if (winningMove != -1) return winningMove
 
-    if (validMovesMask[center]) moves += center // add center if valid
+    /** check valid moves, if lookahead = 0 just play first valid move */
+    val movesToTry = getValidMovesInOrder(pos)
+    if (lookAhead == 0) return movesToTry[0] // return first valid move if no lookahead
 
-    for (dx in 1 .. pos.boardWidth / 2) { // loop over possible distances from center
-        if (validMovesMask[center + dx]) {
-            moves += center + dx // right of center
-        }
-        if (dx <= center && validMovesMask[center - dx]) {
-            moves += center - dx // left of center
+    /** play best candidate move after looking ahead to 'lookAhead' depth */
+    var bestMove = movesToTry[0] // default to closest to center if all losing (should rarely happen)
+
+    // set initial best score and isBetter(score, bestScore) for min/max player (p1/p2)
+    var bestScore = if(pos.currentPlayer == 2) Int.MIN_VALUE else Int.MAX_VALUE
+    fun isBetter(score: Int, bestScore: Int): Boolean {
+        return if (pos.currentPlayer == 2) (score > bestScore)
+        else (score < bestScore)
+    }
+    Log.d("validMoves", "trying moves: ${movesToTry.contentToString()}")
+    for (x in movesToTry) {
+        val (score, _) = minimax(
+            pos = pos.spawnNextPosition(x),
+            depth = lookAhead-1,
+            heuristicFunction = heuristicFunction,
+        )
+        Log.d("score", "score for move: $x is $score")
+        // this comparison implicitly plays equal scoring moves from center outwards
+        if (isBetter(score, bestScore)) {
+            bestScore = score
+            bestMove = x
         }
     }
-    return moves
+    return bestMove
 }
 
 /**
@@ -131,4 +125,25 @@ fun minimax(
         }
         return Pair(minScore, isEndgame)
     }
+}
+
+/**
+ * return array of valid cols to try starting from the middle and working outwards
+ */
+fun getValidMovesInOrder(pos: Position): IntArray {
+    val validMovesMask = pos.validMovesMask()
+    var moves = IntArray(0)
+    val center = (pos.boardWidth - 1) / 2 // integer division, left of centre if even size
+
+    if (validMovesMask[center]) moves += center // add center if valid
+
+    for (dx in 1 .. pos.boardWidth / 2) { // loop over possible distances from center
+        if (validMovesMask[center + dx]) {
+            moves += center + dx // right of center
+        }
+        if (dx <= center && validMovesMask[center - dx]) {
+            moves += center - dx // left of center
+        }
+    }
+    return moves
 }

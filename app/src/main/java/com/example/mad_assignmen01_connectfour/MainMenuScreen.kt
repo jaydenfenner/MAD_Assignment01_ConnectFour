@@ -69,6 +69,12 @@ fun MainMenu_Portrait(navController: NavHostController, shVm: ConnectFourViewMod
         ) {
             Text(text = "Change Player Disk Colours")
         }
+        Button(
+            onClick = { navController.navigate(Routes.GAME_1P_SMALL_6_5) },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Single Player with AI player 1")
+        }
     }
 }
 

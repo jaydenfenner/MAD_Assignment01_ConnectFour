@@ -125,10 +125,7 @@ fun Connect4Board(
                                 gameVm.makePlayerMove(col = x)
 
                                 /** make AI move if single player */
-                                if (gameVm.isSinglePlayer
-                                    && gameVm.currentPlayer == 2
-                                    && !gameVm.isGameOver
-                                    ) {
+                                if (gameVm.isSinglePlayer && !gameVm.isGameOver) {
                                     gameVm.makeAIMove()
                                 }
                             }
