@@ -20,7 +20,7 @@ class GameViewModel() : ViewModel() {
     private val randomAI = Connect4AI()
 
     var isSinglePlayer = false
-    var isAIPlayer1 = false
+    private var isAIPlayer1 = false
     var p1Profile = UserProfile(pName = "", pAvatarID = 0)
     var p2Profile = UserProfile(pName = "", pAvatarID = 0)
     private var hasBeenInitialised by mutableStateOf(false)
@@ -39,7 +39,7 @@ class GameViewModel() : ViewModel() {
             hasBeenInitialised = true
 
             isAIPlayer1 = isAiP1 // TODO extra arg for AI as player 1
-            if (isAiP1) makeAIMove()
+            if (isAiP1) makeAIMove() // TODO extra arg for AI as player 1
         }
     }
 
@@ -72,6 +72,7 @@ class GameViewModel() : ViewModel() {
         gameMessage = ""
         isGameOver = false
         moveStack.clear()
+        if (isAIPlayer1) makeAIMove() // TODO extra arg for AI as player 1
     }
 
     fun movesMade() = moveStack.count() * if(isSinglePlayer) 2 else 1
@@ -106,7 +107,7 @@ class GameViewModel() : ViewModel() {
 
     fun makeAIMove() {
 //        val aiMoveColumn = randomAI.getMove(board.boardState) // old random AI
-        val ai = AI.EvenWeight(lookAhead = 3)
+        val ai = AI.EvenWeight(lookAhead = 5)
         val aiMoveColumn = ai.getMove(getPosition()) // new minimax AI for current position
         if (aiMoveColumn != -1) {
             board.placePiece(col = aiMoveColumn, player = currentPlayer) // assume AI makes valid moves
