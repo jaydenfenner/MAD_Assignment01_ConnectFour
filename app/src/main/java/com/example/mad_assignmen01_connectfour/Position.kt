@@ -12,7 +12,9 @@ import kotlin.math.min
  * current player is 1 for red (usually human) and 2 for yellow (usually AI)
  */
 class Position(val boardWidth: Int, val boardHeight: Int,
-               var currentPlayer: Int
+               var currentPlayer: Int,
+//               var heuristicValue: Int = 0, // TODO optional argument for heuristic value
+//               var heuristicBoard: Array<IntArray> = PositionHeuristics.getHeuristicBoard(boardWidth), // TODO optional argument for heuristic value
 ) {
     var board = Array(boardWidth) { IntArray(boardHeight) { 0 } } // accessed as board
     var columnHeight = IntArray(boardWidth) {0}
@@ -23,7 +25,10 @@ class Position(val boardWidth: Int, val boardHeight: Int,
      */
     fun spawnNextPosition(x: Int): Position {
         // clone the current position
-        val nextPos = Position(boardWidth, boardHeight, currentPlayer)
+        val nextPos = Position(boardWidth, boardHeight, currentPlayer,
+//            heuristicValue = heuristicValue, // TODO extra argument for weighted cells heuristic
+//            heuristicBoard = heuristicBoard, // TODO extra argument for weighted cells heuristic
+        )
         nextPos.board = Array(board.size) { board[it].clone() } // pass by value copy of board
         nextPos.columnHeight = columnHeight.clone()
 
@@ -36,9 +41,12 @@ class Position(val boardWidth: Int, val boardHeight: Int,
      * (Must be called with a valid move)
      */
     private fun makeMove(x: Int) {
+//        val moveWeight = heuristicBoard[columnHeight[x]][x] // TODO extra logic for weighted cells heuristic
+//        heuristicValue += if(currentPlayer == 2) moveWeight else -moveWeight // TODO extra logic for weighted cells heuristic
+
         board[x][columnHeight[x]] = currentPlayer
         columnHeight[x] += 1
-        currentPlayer = if(currentPlayer == 2) 1 else 2
+        currentPlayer = if(currentPlayer == 2) 1 else 2 // toggle current player
     }
 
     /** return true if the game is a draw (i.e. board is full) */
@@ -63,24 +71,26 @@ class Position(val boardWidth: Int, val boardHeight: Int,
      * check if playing in the specified column will win for current player
      * (cheaper than creating a new position, then checking if it is a win)
      */
-    private fun isWinningMove(x: Int): Boolean {
-        val moveHeight = columnHeight[x]
-
+    fun isWinningMove(
+        x: Int,
+        y: Int = columnHeight[x],
+        currentPlayer: Int = this.currentPlayer,
+    ): Boolean {
         // check down (only if high enough)
-        if ((moveHeight >= 3)
-            && (board[x][moveHeight-1] == currentPlayer)
-            && (board[x][moveHeight-2] == currentPlayer)
-            && (board[x][moveHeight-3] == currentPlayer)) return true
+        if ((y >= 3)
+            && (board[x][y-1] == currentPlayer)
+            && (board[x][y-2] == currentPlayer)
+            && (board[x][y-3] == currentPlayer)) return true
 
         // check left within valid bounds (left-to-right from x-3 to x-1), use dx for diagonals
         // x + dx < 0 is too far to left (note dx negative)
         var horizontal = 0; var upDiag = 0; var downDiag = 0
         for (dx in max(-x, -3) .. -1) {
-            if (board[x+dx][moveHeight] == currentPlayer) horizontal += 1 else horizontal = 0
-            if (moveHeight + dx >= 0) {
-                if(board[x+dx][moveHeight + dx] == currentPlayer) upDiag += 1 else upDiag = 0 }
-            if (moveHeight - dx < boardHeight) {
-                if (board[x+dx][moveHeight - dx] == currentPlayer) downDiag += 1 else downDiag = 0 }
+            if (board[x+dx][y] == currentPlayer) horizontal += 1 else horizontal = 0
+            if (y + dx >= 0) {
+                if(board[x+dx][y + dx] == currentPlayer) upDiag += 1 else upDiag = 0 }
+            if (y - dx < boardHeight) {
+                if (board[x+dx][y - dx] == currentPlayer) downDiag += 1 else downDiag = 0 }
             // (don't need to check win since there can't be enough yet)
         }
 
@@ -91,11 +101,11 @@ class Position(val boardWidth: Int, val boardHeight: Int,
         // check right within valid bounds (left-to-right from x+1 to x+3), use dx for diagonals
         // x + dx >= boardWidth - 1 is too far to right
         for (dx in 1 .. min(3, boardWidth-1 -x)) {
-            if (board[x+dx][moveHeight] == currentPlayer) horizontal += 1 else horizontal = 0
-            if (moveHeight + dx < boardHeight) {
-                if (board[x + dx][moveHeight + dx] == currentPlayer) upDiag += 1 else upDiag = 0 }
-            if (moveHeight - dx >= 0) {
-                if (board[x + dx][moveHeight - dx] == currentPlayer) downDiag += 1 else downDiag = 0 }
+            if (board[x+dx][y] == currentPlayer) horizontal += 1 else horizontal = 0
+            if (y + dx < boardHeight) {
+                if (board[x + dx][y + dx] == currentPlayer) upDiag += 1 else upDiag = 0 }
+            if (y - dx >= 0) {
+                if (board[x + dx][y - dx] == currentPlayer) downDiag += 1 else downDiag = 0 }
 
             // check for sets of 4 after updating for each location
             if (horizontal == 4 || upDiag == 4 || downDiag == 4) return true

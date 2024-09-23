@@ -53,6 +53,7 @@ fun GameScreen(navController: NavHostController, shVm: ConnectFourViewModel,
         p1_profile = player1,
         p2_profile = player2,
         isAiP1 = isAIPlayer1, // TODO extra option for AI as P1
+        ai = shVm.aiDifficulty,
     )
 
     val orientation = LocalConfiguration.current.orientation
@@ -90,19 +91,18 @@ fun GameScreen_Portrait(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileDisplay(shVm = shVm, gameVm = gameVm)
-//        Row() {
-//            Column() {
-//                Text(gameVm.p1Profile.name)
-//                ProfileStatistics(gameVm.p1Profile)
-//            }
-//            Spacer(Modifier.size(50.dp))
-//            Column(){
-//                Text(gameVm.p2Profile.name)
-//                ProfileStatistics(gameVm.p2Profile)
-//            }
-//        }
+        Row() {
+            Column() {
+                Text(gameVm.p1Profile.name)
+                ProfileStatistics(gameVm.p1Profile)
+            }
+            Spacer(Modifier.size(50.dp))
+            Column(){
+                Text(gameVm.p2Profile.name)
+                ProfileStatistics(gameVm.p2Profile)
+            }
+        }
         DisplayGameMessage(gameVm)
-        Text(text = gameVm.getPosition().boardString())
         Connect4Board(shVm, gameVm)
         Text(
             text = "Current Turn: ${currentPlayerProfile.name}",
@@ -181,6 +181,7 @@ fun GameScreenPortrait_Preview() {
         is1P = true,
         p1_profile = shVm.player1Profile,
         p2_profile = shVm.computerProfile,
+        ai = shVm.aiDifficulty,
     )
     GameScreen_Portrait(navController = navController,
         shVm = shVm, gameVm = gameVm)
@@ -198,6 +199,7 @@ fun GameScreenLandscape_Preview() {
         is1P = true,
         p1_profile = shVm.player1Profile,
         p2_profile = shVm.computerProfile,
+        ai = shVm.aiDifficulty,
     )
     GameScreen_Landscape(navController = navController,
         shVm = shVm, gameVm = gameVm)

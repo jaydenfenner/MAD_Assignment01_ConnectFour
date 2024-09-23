@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -75,6 +77,38 @@ fun MainMenu_Portrait(navController: NavHostController, shVm: ConnectFourViewMod
         ) {
             Text(text = "Single Player with AI player 1")
         }
+
+        Text("Select AI Difficulty:", modifier = Modifier.padding(top = 16.dp))
+        Row {
+            Button(onClick = {shVm.aiDifficulty = AiDifficulty.TRIVIAL},
+                enabled = shVm.aiDifficulty != AiDifficulty.TRIVIAL
+            ) {
+                Text("Trivial", fontSize = 15.sp)
+            }
+            Button(onClick = {shVm.aiDifficulty = AiDifficulty.EASY},
+                enabled = shVm.aiDifficulty != AiDifficulty.EASY
+            ) {
+                Text("Easy", fontSize = 15.sp)
+            }
+        }
+        Row {
+            Button(onClick = {shVm.aiDifficulty = AiDifficulty.MEDIUM},
+                enabled = shVm.aiDifficulty != AiDifficulty.MEDIUM
+            ) {
+                Text("Medium", fontSize = 15.sp)
+            }
+            Button(onClick = {shVm.aiDifficulty = AiDifficulty.HARD},
+                enabled = shVm.aiDifficulty != AiDifficulty.HARD
+            ) {
+                Text("Hard", fontSize = 15.sp)
+            }
+        }
+        Button(onClick = {shVm.aiDifficulty = AiDifficulty.IMPOSSIBLE},
+            enabled = shVm.aiDifficulty != AiDifficulty.IMPOSSIBLE
+        ) {
+            Text("IMPOSSIBLE", fontSize = 15.sp)
+        }
+
     }
 }
 

@@ -17,7 +17,8 @@ class GameViewModel() : ViewModel() {
     var height = 1
         private set
 
-    private val randomAI = Connect4AI()
+//    private val randomAI = Connect4AI()
+    var aiDifficulty= AiDifficulty.EASY
 
     var isSinglePlayer = false
     private var isAIPlayer1 = false
@@ -27,6 +28,7 @@ class GameViewModel() : ViewModel() {
 
     fun initialise(boardWidth: Int, boardHeight: Int,
                    is1P: Boolean, p1_profile: UserProfile, p2_profile: UserProfile,
+                   ai: AiDifficulty = AiDifficulty.EASY,
                    isAiP1: Boolean = false, // TODO extra arg for AI as player 1
     ) {
         if (!hasBeenInitialised) {
@@ -37,6 +39,8 @@ class GameViewModel() : ViewModel() {
             p1Profile = p1_profile
             p2Profile = p2_profile
             hasBeenInitialised = true
+
+            aiDifficulty = ai // set AI difficulty
 
             isAIPlayer1 = isAiP1 // TODO extra arg for AI as player 1
             if (isAiP1) makeAIMove() // TODO extra arg for AI as player 1
@@ -62,6 +66,7 @@ class GameViewModel() : ViewModel() {
                 }
             }
         }
+//        position.heuristicValue = PositionHeuristics.naiveWeightedPositions(position) // TODO extra for using weighted positions heuristic
         return position
     }
 
@@ -106,8 +111,26 @@ class GameViewModel() : ViewModel() {
     }
 
     fun makeAIMove() {
+        val ai: AI.connect4Ai = when (aiDifficulty) {
+            AiDifficulty.TRIVIAL -> AI.RandomAI() // TODO trivial AI opponent (random)
+            AiDifficulty.EASY -> AI.Open2sAnd3s(lookAhead = 1) // TODO easy AI opponent - only blocks 3s (need to fork)
+            AiDifficulty.MEDIUM -> AI.Open2sAnd3s(lookAhead = 2) // TODO medium AI opponent - sees forks coming 1 turn ahead
+            AiDifficulty.HARD -> AI.Open2sAnd3s(lookAhead = 4) // TODO hard AI opponent - quite challenging, need to setup win 3 moves in advance
+            AiDifficulty.IMPOSSIBLE -> AI.Open2sAnd3s(lookAhead = 8) // TODO impossible AI opponent, made to beat opposing AI
+        }
 //        val aiMoveColumn = randomAI.getMove(board.boardState) // old random AI
-        val ai = AI.EvenWeight(lookAhead = 5)
+//        val ai = AI.EvenWeight(lookAhead = 11)
+//        val ai = AI.WeightedPositions(lookAhead = 9) // TODO actually worse than column ordering, can't put value on blocked pieces
+//        val ai = AI.Open3s(lookAhead = 8)
+//        val ai = AI.EfficientOpen3s(lookAhead = 9)
+//        val ai = AI.Open2sAnd3s(lookAhead = 8) // TODO beats the nonperfect AI so call it a win
+
+//        val ai = randomAI.getMove(board.boardState) // TODO trivial AI opponent (random)
+//        val ai = AI.Open2sAnd3s(lookAhead = 1) // TODO easy AI opponent - only blocks 3s (need to fork)
+//        val ai = AI.Open2sAnd3s(lookAhead = 2) // TODO medium AI opponent - sees forks coming 1 turn ahead
+//        val ai = AI.Open2sAnd3s(lookAhead = 4) // TODO hard AI opponent - quite challenging, need to setup win 3 moves in advance
+//        val ai = AI.Open2sAnd3s(lookAhead = 8) // TODO impossible AI opponent, made to beat opposing AI
+
         val aiMoveColumn = ai.getMove(getPosition()) // new minimax AI for current position
         if (aiMoveColumn != -1) {
             board.placePiece(col = aiMoveColumn, player = currentPlayer) // assume AI makes valid moves

@@ -25,6 +25,9 @@ class ConnectFourViewModel: ViewModel() {
     // disc colours
     var leftPlayerDiskColour by mutableStateOf(Color.Red)
     var rightPlayerDiskColour by mutableStateOf(Color.Yellow)
+
+    // AI difficulty
+    var aiDifficulty by mutableStateOf(AiDifficulty.EASY)
 }
 
 // CLASS DEFINITIONS BELOW

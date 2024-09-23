@@ -36,7 +36,7 @@ fun GameControls(
     gameVm: GameViewModel,
 ) {
     Button(
-        enabled = (!gameVm.isGameOver && !gameVm.moveStack.isEmpty()),
+        enabled = !gameVm.moveStack.isEmpty(), //(!gameVm.isGameOver && !gameVm.moveStack.isEmpty()),
         onClick = {gameVm.undoMove()},
         modifier = Modifier.padding(top = 16.dp)
     ) {
@@ -87,6 +87,7 @@ fun Preview_Connect4Board() {
         is1P = true,
         p1_profile = shVm.player1Profile,
         p2_profile = shVm.computerProfile,
+        ai = shVm.aiDifficulty
     )
     Connect4Board(shVm, gameVm)
 }

@@ -27,9 +27,10 @@ fun AppNavigation() {
     val sharedViewModel = viewModel<ConnectFourViewModel>()
     val navController = rememberNavController()
 
-//    NavHost(navController = navController, startDestination = Routes.MAIN_MENU) {
+    NavHost(navController = navController, startDestination = Routes.MAIN_MENU) {
 //    NavHost(navController = navController, startDestination = Routes.GAME_1P_SMALL_6_5) {
-    NavHost(navController = navController, startDestination = Routes.GAME_AI_AS_P1) { // TODO extra option for AI as P1
+//    NavHost(navController = navController, startDestination = Routes.GAME_1P_STANDARD_7_6) {
+//    NavHost(navController = navController, startDestination = Routes.GAME_AI_AS_P1) { // TODO extra option for AI as P1
 
         composable(Routes.MAIN_MENU) {MainMenuScreen(navController, sharedViewModel) }
         composable(Routes.EDIT_PROFILES) { EditProfilesScreen(sharedViewModel) }
