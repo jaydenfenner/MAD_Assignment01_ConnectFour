@@ -116,7 +116,7 @@ class GameViewModel() : ViewModel() {
             AiDifficulty.EASY -> AI.Open2sAnd3s(lookAhead = 1) // TODO easy AI opponent - only blocks 3s (need to fork)
             AiDifficulty.MEDIUM -> AI.Open2sAnd3s(lookAhead = 2) // TODO medium AI opponent - sees forks coming 1 turn ahead
             AiDifficulty.HARD -> AI.Open2sAnd3s(lookAhead = 4) // TODO hard AI opponent - quite challenging, need to setup win 3 moves in advance
-            AiDifficulty.IMPOSSIBLE -> AI.Open2sAnd3s(lookAhead = 8) // TODO impossible AI opponent, made to beat opposing AI
+            AiDifficulty.IMPOSSIBLE -> AI.Open2sAnd3s(lookAhead = 7) // TODO impossible AI opponent, made to beat opposing AI
         }
 //        val aiMoveColumn = randomAI.getMove(board.boardState) // old random AI
 //        val ai = AI.EvenWeight(lookAhead = 11)
